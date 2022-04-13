@@ -1,4 +1,5 @@
 import 'package:app_30_car_service_app/ui/home/available_shops_screen.dart';
+import 'package:intl/intl.dart';
 
 import '../../custom_widgets/custom_wrappers.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //ThemeData & constraints
-    ThemeData _theme = Theme.of(context);
+    ThemeData theme = Theme.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -53,11 +54,55 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(18.0),
             child: Column(
               children: [
-                _profileWidget(_theme),
+                ProfileWidget(theme: theme),
                 const SizedBox(height: 20),
-                _bookingStats(_theme),
+                BookingStats(theme: theme),
                 const SizedBox(height: 20),
-                _serviceTabs(context, screenWidth, _theme),
+                ServiceTabs(screenWidth: screenWidth, theme: theme),
+                const SizedBox(height: 20),
+                Column(
+                  children: [
+                    Text(
+                      'History',
+                      style: theme.textTheme.headline3,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: customContainer(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text(
+                                      DateFormat('d MMM y')
+                                          .format(DateTime.now())
+                                          .toString(),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      DateFormat('kk:mm')
+                                          .format(DateTime.now())
+                                          .toString(),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: screenWidth * 0.4,
+                                  child: Text(
+                                      'Shop Nameasl alskd fjals dflsjdf alskd falskdjf aslkdjf'),
+                                ),
+                                Text('PKR : 1590')
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 20),
               ],
             ),
@@ -66,15 +111,22 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _serviceTabs(
-      BuildContext context, double screenWidth, ThemeData _theme) {
+class ServiceTabs extends StatelessWidget {
+  const ServiceTabs({Key? key, required this.theme, required this.screenWidth})
+      : super(key: key);
+  final ThemeData theme;
+  final double screenWidth;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Services',
-          style: _theme.textTheme.headline3,
+          style: theme.textTheme.headline3,
         ),
         const SizedBox(height: 20),
         Row(
@@ -85,7 +137,8 @@ class HomeScreen extends StatelessWidget {
                   showModalBottomSheet(
                       context: context,
                       builder: (BuildContext context) {
-                        return _carWashServices(context, _theme, screenWidth);
+                        return CarWashServices(
+                            theme: theme, screenWidth: screenWidth);
                       });
                 },
                 child: customContainer(
@@ -114,7 +167,8 @@ class HomeScreen extends StatelessWidget {
                   showModalBottomSheet(
                       context: context,
                       builder: (BuildContext context) {
-                        return _workshopServices(context, _theme, screenWidth);
+                        return WorkShopServices(
+                            theme: theme, screenWidth: screenWidth);
                       });
                 },
                 child: customContainer(
@@ -131,7 +185,7 @@ class HomeScreen extends StatelessWidget {
                         size: 60,
                       ),
 
-                      const Text('Workshop'),
+                      Text('Workshop'),
                     ],
                   ),
                 ),
@@ -144,7 +198,8 @@ class HomeScreen extends StatelessWidget {
                   showModalBottomSheet(
                       context: context,
                       builder: (BuildContext context) {
-                        return _tyreShopServices(context, _theme, screenWidth);
+                        return TyreShopServices(
+                            theme: theme, screenWidth: screenWidth);
                       });
                 },
                 child: customContainer(
@@ -172,9 +227,17 @@ class HomeScreen extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _tyreShopServices(
-      BuildContext context, ThemeData _theme, double screenWidth) {
+class TyreShopServices extends StatelessWidget {
+  const TyreShopServices(
+      {Key? key, required this.theme, required this.screenWidth})
+      : super(key: key);
+  final ThemeData theme;
+  final double screenWidth;
+
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -183,12 +246,12 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               'Tyre Shop',
-              style: _theme.textTheme.headline3,
+              style: theme.textTheme.headline3,
             ),
             const SizedBox(height: 20),
             customImageBox(
               screenWidth,
-              _theme,
+              theme,
               image: carTyreChangeServiceImage,
               title: 'Tyre Change',
               onTap: () {
@@ -198,7 +261,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             customImageBox(
               screenWidth,
-              _theme,
+              theme,
               image: carTyreRepairServiceImage,
               title: 'Tyre Repair',
               onTap: () {
@@ -211,9 +274,17 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _workshopServices(
-      BuildContext context, ThemeData _theme, double screenWidth) {
+class WorkShopServices extends StatelessWidget {
+  const WorkShopServices(
+      {Key? key, required this.theme, required this.screenWidth})
+      : super(key: key);
+  final ThemeData theme;
+  final double screenWidth;
+
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -222,12 +293,12 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               'Workshop',
-              style: _theme.textTheme.headline3,
+              style: theme.textTheme.headline3,
             ),
             const SizedBox(height: 20),
             customImageBox(
               screenWidth,
-              _theme,
+              theme,
               image: oilChangeServiceImage,
               title: 'Oil Change',
               onTap: () {
@@ -237,7 +308,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             customImageBox(
               screenWidth,
-              _theme,
+              theme,
               image: breakServiceImage,
               title: 'Break Service',
               onTap: () {
@@ -247,7 +318,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             customImageBox(
               screenWidth,
-              _theme,
+              theme,
               image: fullCarServiceImage,
               title: 'Car Service',
               onTap: () {
@@ -257,7 +328,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             customImageBox(
               screenWidth,
-              _theme,
+              theme,
               image: batteryServiceImage,
               title: 'Battery Issue',
               onTap: () {
@@ -270,9 +341,17 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _carWashServices(
-      BuildContext context, ThemeData _theme, double screenWidth) {
+class CarWashServices extends StatelessWidget {
+  const CarWashServices(
+      {Key? key, required this.theme, required this.screenWidth})
+      : super(key: key);
+  final ThemeData theme;
+  final double screenWidth;
+
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -281,12 +360,12 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               'Car Wash',
-              style: _theme.textTheme.headline3,
+              style: theme.textTheme.headline3,
             ),
             const SizedBox(height: 20),
             customImageBox(
               screenWidth,
-              _theme,
+              theme,
               image: halfCarWashServiceImage,
               title: 'Half Car Wash',
               onTap: () {
@@ -296,7 +375,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             customImageBox(
               screenWidth,
-              _theme,
+              theme,
               image: fullCarWashServiceImage,
               title: 'Full Car Wash',
               onTap: () {
@@ -309,8 +388,14 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _bookingStats(ThemeData _theme) {
+class BookingStats extends StatelessWidget {
+  const BookingStats({Key? key, required this.theme}) : super(key: key);
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
     return customContainer(
         height: 100,
         child: Row(
@@ -323,11 +408,11 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Text(
                       '1',
-                      style: _theme.textTheme.headline3,
+                      style: theme.textTheme.headline3,
                     ),
                     Text(
                       'Cars',
-                      style: _theme.textTheme.headline4,
+                      style: theme.textTheme.headline4,
                     ),
                   ],
                 ),
@@ -340,11 +425,11 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Text(
                       '1',
-                      style: _theme.textTheme.headline3,
+                      style: theme.textTheme.headline3,
                     ),
                     Text(
                       'Bookings',
-                      style: _theme.textTheme.headline4,
+                      style: theme.textTheme.headline4,
                     ),
                   ],
                 ),
@@ -357,11 +442,11 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Text(
                       '1',
-                      style: _theme.textTheme.headline3,
+                      style: theme.textTheme.headline3,
                     ),
                     Text(
                       'Reviews',
-                      style: _theme.textTheme.headline4,
+                      style: theme.textTheme.headline4,
                     ),
                   ],
                 ),
@@ -370,8 +455,13 @@ class HomeScreen extends StatelessWidget {
           ],
         ));
   }
+}
 
-  Widget _profileWidget(ThemeData _theme) {
+class ProfileWidget extends StatelessWidget {
+  const ProfileWidget({Key? key, required this.theme}) : super(key: key);
+  final ThemeData theme;
+  @override
+  Widget build(BuildContext context) {
     return customContainer(
       height: 120,
       child: Row(
@@ -393,11 +483,11 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Hammad',
-                    style: _theme.textTheme.headline3,
+                    style: theme.textTheme.headline3,
                   ),
                   Text(
                     '+923012345678',
-                    style: _theme.textTheme.headline5,
+                    style: theme.textTheme.headline5,
                   ),
                 ],
               )),

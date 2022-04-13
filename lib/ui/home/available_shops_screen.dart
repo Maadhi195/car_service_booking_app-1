@@ -45,13 +45,13 @@ class AvailableShopsScreen extends StatelessWidget {
   }
 
   Widget _availableShopItem(BuildContext context, ThemeData _theme) {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).pushNamed(ShopScreen.routeName);
-      },
-      child: Column(
-        children: [
-          customContainer(
+    return Column(
+      children: [
+        InkWell(
+          onTap: () {
+            Navigator.of(context).pushNamed(ShopScreen.routeName);
+          },
+          child: customContainer(
             child: Column(
               children: [
                 Row(
@@ -94,9 +94,9 @@ class AvailableShopsScreen extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 20),
-        ],
-      ),
+        ),
+        const SizedBox(height: 20),
+      ],
     );
   }
 }

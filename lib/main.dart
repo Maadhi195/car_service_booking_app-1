@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: lightTheme(context),
       routes: {
-        '/': (ctx) => LoginScreen(),
+        '/': (ctx) => HomeScreen(),
         LoginScreen.routeName: (ctx) => LoginScreen(),
         SignupScreen.routeName: (ctx) => SignupScreen(),
         HomeScreen.routeName: (ctx) => HomeScreen(),
