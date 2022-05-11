@@ -4,7 +4,7 @@ import 'function_response.dart';
 import '../service_locator.dart';
 
 class CustomAlerts {
-  void showSnackBar(String message, BuildContext context,
+  void showSnackBar(BuildContext context, String message,
       {bool success = false}) {
     final ThemeData theme = Theme.of(context);
     ScaffoldMessenger.of(context).hideCurrentSnackBar();

@@ -35,12 +35,16 @@ class CustomImageHelper {
 
   Future<FunctionResponse> pickUserImage(BuildContext context) async {
     FunctionResponse _fResponse = getIt<FunctionResponse>();
+    final ThemeData theme = Theme.of(context);
     String _pickedImage = '';
     final ImagePicker _picker = ImagePicker();
     await showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-              title: const Text('Select an Image'),
+              title: Text(
+                'Select an Image',
+                style: theme.textTheme.headline3,
+              ),
               actions: [
                 TextButton(
                     onPressed: () async {
@@ -64,7 +68,10 @@ class CustomImageHelper {
                         Navigator.of(context).pop();
                       }
                     },
-                    child: const Text('Open Gallery')),
+                    child: Text(
+                      'Open Gallery',
+                      style: theme.textTheme.headline4,
+                    )),
                 TextButton(
                     onPressed: () async {
                       final XFile? photo =
@@ -86,7 +93,10 @@ class CustomImageHelper {
                         Navigator.of(context).pop();
                       }
                     },
-                    child: const Text('Capture')),
+                    child: Text(
+                      'Capture',
+                      style: theme.textTheme.headline4,
+                    )),
               ],
             ));
 

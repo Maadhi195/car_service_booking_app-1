@@ -1,32 +1,27 @@
+import 'package:string_validator/string_validator.dart';
+
 class CustomValidator {
   String? validateName(String? value) {
-    String pattern = r'(^[a-zA-Z ]*$)';
-
-    if (value == null) {
-      return 'Add a Name';
+    if (value == null || value.isEmpty) {
+      return 'Please enter your name';
+    } else if (!isAlpha(value)) {
+      return 'Only Letters Please';
     }
+    return null;
+  }
 
-    RegExp regExp = RegExp(pattern);
-    if (value.isEmpty) {
-      return "Name is Required";
-    } else if (!regExp.hasMatch(value)) {
-      return "Name must be a-z and A-Z";
+  String? validateNonNullableString(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field is required';
     }
     return null;
   }
 
   String? validateAlphaNmeric(String? value) {
-    String pattern = r'^[a-zA-Z0-9\-\s]+$';
-
-    if (value == null) {
-      return 'Field is required';
-    }
-
-    RegExp regExp = RegExp(pattern);
-    if (value.isEmpty) {
-      return "Field is Required";
-    } else if (!regExp.hasMatch(value)) {
-      return "Please avoid special characters";
+    if (value == null || value.isEmpty) {
+      return 'Please enter your last name';
+    } else if (!isAlphanumeric(value)) {
+      return 'Only Letters Please';
     }
     return null;
   }

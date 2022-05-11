@@ -80,10 +80,11 @@ class ServiceBookingScreen extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           customContainer(
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
                 _customListItem(
-                    _theme, 'Date', DateFormat('y:M:d').format(DateTime.now())),
+                    _theme, 'Date', DateFormat('d M y').format(DateTime.now())),
                 _customListItem(_theme, 'Duration', '90 minutes'),
                 _customListItem(_theme, 'Address', 'south park, london'),
               ],
@@ -134,6 +135,7 @@ class ServiceBookingScreen extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           customContainer(
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
                 _customListItem(_theme, 'Car Brand', 'Audi A6'),
