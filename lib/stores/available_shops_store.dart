@@ -14,7 +14,7 @@ class AvailableShopeStore = _AvailableShopeStore with _$AvailableShopeStore;
 
 abstract class _AvailableShopeStore with Store {
   @observable
-  ObservableList<VehicleService> availableShopsList =
+  ObservableList<VehicleService> availableServicesList =
       ObservableList<VehicleService>.of([
     VehicleService(
       id: '1',

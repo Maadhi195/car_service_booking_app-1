@@ -39,9 +39,9 @@ class AvailableShopsScreen extends StatelessWidget {
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _availableShopeStore.availableShopsList.isEmpty
+                  itemCount: _availableShopeStore.availableServicesList.isEmpty
                       ? 1
-                      : _availableShopeStore.availableShopsList.length,
+                      : _availableShopeStore.availableServicesList.length,
                   itemBuilder: (ctx, index) => _availableShopItem(
                       context, _theme, index, _availableShopeStore),
                 ),
@@ -56,7 +56,7 @@ class AvailableShopsScreen extends StatelessWidget {
 
   Widget _availableShopItem(BuildContext context, ThemeData _theme, int index,
       AvailableShopeStore availableShopeStore) {
-    if (_availableShopeStore.availableShopsList.isEmpty) {
+    if (_availableShopeStore.availableServicesList.isEmpty) {
       return Center(
         child: Text(
           'No Shop Found Nearby :(',
@@ -65,7 +65,7 @@ class AvailableShopsScreen extends StatelessWidget {
       );
     } else {
       VehicleService currentItem =
-          availableShopeStore.availableShopsList[index];
+          availableShopeStore.availableServicesList[index];
       return Column(
         children: [
           InkWell(

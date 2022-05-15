@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 
 //UI and Theme
+import 'custom_utils/google_maps_helper.dart';
 import 'stores/available_shops_store.dart';
 import 'stores/book_service_store.dart';
 import 'stores/manage_vehicle_store.dart';
@@ -28,6 +29,7 @@ Future<void> setupLocator() async {
   getIt.registerFactory(() => CustomImageHelper());
   getIt.registerFactory(() => ConnectivityHelper());
   getIt.registerFactory(() => CustomFormHelper());
+  getIt.registerFactory(() => GoogleMapsHelper());
 
   //UI and Theme
   getIt.registerFactory(() => AppColors());

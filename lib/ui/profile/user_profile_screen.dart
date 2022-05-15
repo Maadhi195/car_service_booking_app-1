@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 
 import '../../custom_utils/custom_alerts.dart';
+import '../../custom_utils/google_maps_helper.dart';
 import '../../custom_utils/image_helper.dart';
 import '../../custom_utils/function_response.dart';
 import '../../service_locator.dart';
@@ -22,6 +24,7 @@ class UserProfileScreen extends StatelessWidget {
   //Custom Utilities
   final CustomImageHelper _customImageHelper = getIt<CustomImageHelper>();
   final CustomAlerts _customAlerts = getIt<CustomAlerts>();
+  final GoogleMapsHelper _googleMapsHelper = getIt<GoogleMapsHelper>();
 
   //Functions
   Future<void> changeUserImage(BuildContext context) async {
@@ -39,6 +42,25 @@ class UserProfileScreen extends StatelessWidget {
       _customAlerts.popLoader(context);
     } catch (e) {
       fResponse.failed(message: 'Unable to change user Image : $e');
+    }
+  }
+
+  Future<void> changeUserLatLng(BuildContext context) async {
+    FunctionResponse fResponse = getIt<FunctionResponse>();
+
+    try {
+      // _customAlerts.showLoaderDialog(context);
+
+      fResponse = _googleMapsHelper.showPlacePicker(context);
+
+      if (fResponse.success) {
+        final PickResult pickResult = fResponse.data;
+        fResponse =
+            await _userProfileScreenStore.updateUserLatLng(fResponse.data);
+      }
+      // _customAlerts.popLoader(context);
+    } catch (e) {
+      fResponse.failed(message: 'Unable to change user LatLng : $e');
     }
   }
 
@@ -105,6 +127,18 @@ class UserProfileScreen extends StatelessWidget {
                   'User Bio',
                   EditUserBioScreen.routeName);
             }),
+            Observer(builder: (_) {
+              return buildUserInfoDisplay(
+                context,
+                theme,
+                _userProfileScreenStore.user.userLatLng.toString(),
+                'User Location',
+                EditUserBioScreen.routeName,
+                onPressed: () {
+                  changeUserLatLng(context);
+                },
+              );
+            }),
             // buildUserInfoDisplay(user.email, 'Email', EditEmailFormPage()),
           ],
         ),
@@ -114,7 +148,8 @@ class UserProfileScreen extends StatelessWidget {
 }
 
 Widget buildUserInfoDisplay(BuildContext context, ThemeData theme,
-        String getValue, String title, String editPage) =>
+        String getValue, String title, String editPage,
+        {VoidCallback? onPressed}) =>
     Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Column(
@@ -140,9 +175,10 @@ Widget buildUserInfoDisplay(BuildContext context, ThemeData theme,
                     )),
               ),
               IconButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(editPage);
-                },
+                onPressed: onPressed ??
+                    () {
+                      Navigator.of(context).pushNamed(editPage);
+                    },
                 icon: const Icon(Icons.edit),
               ),
             ],
