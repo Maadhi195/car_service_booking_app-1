@@ -58,6 +58,7 @@ class DisplayImage extends StatelessWidget {
           )
         : Image.file(
             File(imagePath),
+            fit: BoxFit.cover,
             errorBuilder: (BuildContext context, Object exception,
                 StackTrace? stackTrace) {
               return Icon(
@@ -67,19 +68,14 @@ class DisplayImage extends StatelessWidget {
             },
           );
 
-    return CircleAvatar(
-      radius: 75,
-      backgroundColor: color,
-      child: CircleAvatar(
-        // backgroundImage: image as ImageProvider,
-        // onBackgroundImageError: (obj, _) {
-        //   print('Error displaying circle Avatar');
-        // },
-        child:
-            ClipRRect(borderRadius: BorderRadius.circular(150), child: image),
-        radius: 70,
-      ),
-    );
+    return ClipRRect(
+        borderRadius: BorderRadius.circular(300),
+        child: Container(
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(),
+            height: 120,
+            width: 120,
+            child: image));
   }
 
   // Builds Edit Icon on Profile Picture

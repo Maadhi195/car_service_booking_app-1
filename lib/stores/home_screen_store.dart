@@ -1,3 +1,5 @@
+import 'package:app_30_car_service_app/custom_utils/google_maps_helper.dart';
+import 'package:app_30_car_service_app/resources/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 //Models
@@ -22,12 +24,18 @@ abstract class _HomeScreenStore with Store {
         id: '1',
         name: 'Faiq Car Service',
         address: 'Mujahid Colony, Burewala',
+        coverImage: fullCarWashServiceImage,
+        rating: 3.3,
+        shopLocation: GoogleMapsHelper().defaultGoogleMapsLocation,
         openingTime: TimeOfDay.now(),
         closingTime: TimeOfDay.now()),
     ServiceShop(
         id: '2',
         name: 'Bilal Car Service',
         address: 'Satellite Town, Burewala',
+        coverImage: carTyreChangeServiceImage,
+        rating: 3.3,
+        shopLocation: GoogleMapsHelper().defaultGoogleMapsLocation,
         openingTime: TimeOfDay.now(),
         closingTime: TimeOfDay.now()),
   ]);

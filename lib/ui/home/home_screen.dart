@@ -55,13 +55,13 @@ class HomeScreen extends StatelessWidget {
               children: [
                 IconButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamed(ChatScreen.routeName);
+                      // Navigator.of(context).pushNamed(ChatScreen.routeName);
                     },
                     icon: const Icon(Icons.notifications)),
                 IconButton(
                     onPressed: () {
-                      Navigator.of(context)
-                          .pushReplacementNamed(LoginScreen.routeName);
+                      // Navigator.of(context)
+                      // .pushReplacementNamed(LoginScreen.routeName);
                     },
                     icon: const Icon(Icons.logout)),
               ],
@@ -488,6 +488,7 @@ class ProfileWidget extends StatelessWidget {
             Navigator.of(context).pushNamed(UserProfileScreen.routeName),
         child: Row(
           children: [
+            const SizedBox(width: 10),
             Expanded(
                 child: CircleAvatar(
               radius: 50,

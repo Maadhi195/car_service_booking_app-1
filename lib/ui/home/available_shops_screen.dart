@@ -101,11 +101,11 @@ class AvailableShopsScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       currentItem.shopName,
-                                      style: _theme.textTheme.headline4,
+                                      style: _theme.textTheme.headline5,
                                     ),
                                     Text(
                                       '${currentItem.cost} PKR',
-                                      style: _theme.textTheme.headline5,
+                                      style: _theme.textTheme.headline6,
                                     ),
                                   ],
                                 ),

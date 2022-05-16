@@ -62,71 +62,74 @@ class ServiceDetails extends StatelessWidget {
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Column(children: [
-          customContainer(
-            height: 250,
-            width: screenWidth,
-            child: Image.asset(
-              vehicleService.coverImage,
-              fit: BoxFit.cover,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(children: [
+            customContainer(
+              height: 250,
+              width: screenWidth,
+              child: Image.asset(
+                vehicleService.coverImage,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          customContainer(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
+            const SizedBox(height: 20),
+            customContainer(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  _customListItem(theme, 'Shop Name', vehicleService.shopName),
+                  _customListItem(
+                      theme, 'Description', vehicleService.description),
+                  _customListItem(theme, 'Serivice Type',
+                      vehicleService.serviceType.getName()),
+                  _customListItem(theme, 'Rating',
+                      vehicleService.rating.toStringAsFixed(1)),
+                  _customListItem(theme, 'Address', vehicleService.address),
+                  _customListItem(theme, 'Distance',
+                      '${vehicleService.distance.toStringAsFixed(1)} km'),
+                  _customListItem(
+                      theme, 'Cost', '${vehicleService.cost.toString()} PKR'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
               children: [
-                _customListItem(theme, 'Shop Name', vehicleService.shopName),
-                _customListItem(
-                    theme, 'Description', vehicleService.description),
-                _customListItem(theme, 'Serivice Type',
-                    vehicleService.serviceType.getName()),
-                _customListItem(
-                    theme, 'Rating', vehicleService.rating.toStringAsFixed(1)),
-                _customListItem(theme, 'Address', vehicleService.address),
-                _customListItem(theme, 'Distance',
-                    '${vehicleService.distance.toStringAsFixed(1)} km'),
-                _customListItem(
-                    theme, 'Cost', '${vehicleService.cost.toString()} PKR'),
+                Expanded(
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                          foregroundColor:
+                              MaterialStateProperty.all(Colors.black),
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                        ),
+                        onPressed: () {
+                          DatePicker.showDateTimePicker(context,
+                              showTitleActions: true,
+                              minTime: DateTime(2018, 3, 5),
+                              maxTime: DateTime(2029, 6, 7),
+                              onConfirm: (date) async {
+                            print('confirm $date');
+
+                            await bookService(context, date, vehicleService);
+                          }, currentTime: DateTime.now());
+                        },
+                        child: const Text('Book Service'))),
               ],
             ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                  child: ElevatedButton(
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.black),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                      ),
-                      onPressed: () {
-                        DatePicker.showDateTimePicker(context,
-                            showTitleActions: true,
-                            minTime: DateTime(2018, 3, 5),
-                            maxTime: DateTime(2029, 6, 7),
-                            onConfirm: (date) async {
-                          print('confirm $date');
-
-                          await bookService(context, date, vehicleService);
-                        }, currentTime: DateTime.now());
-                      },
-                      child: const Text('Book Service'))),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                  child: ElevatedButton(
-                      onPressed: () {}, child: Text('Request Mobile Service'))),
-            ],
-          ),
-        ]),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                    child: ElevatedButton(
+                        onPressed: () {},
+                        child: Text('Request Mobile Service'))),
+              ],
+            ),
+          ]),
+        ),
       ),
     ));
   }
@@ -141,15 +144,26 @@ Widget _customListItem(ThemeData _theme, String key, String value) {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  key,
-                  style: _theme.textTheme.headline5,
+                Expanded(
+                  child: Text(
+                    key,
+                    style: _theme.textTheme.headline5,
+                    softWrap: false,
+                    overflow: TextOverflow.visible,
+                  ),
                 ),
-                Text(
-                  value,
-                  // softWrap: true,
-                  style: _theme.textTheme.headline5,
-                  overflow: TextOverflow.ellipsis,
+                Expanded(
+                  child: SizedBox(),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    value,
+
+                    softWrap: true,
+                    style: _theme.textTheme.headline5,
+                    // overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
