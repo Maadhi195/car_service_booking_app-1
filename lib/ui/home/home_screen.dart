@@ -1,17 +1,29 @@
-import 'package:app_30_car_service_app/ui/home/available_shops_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../custom_widgets/custom_wrappers.dart';
 import 'package:flutter/material.dart';
 //Theme
+import '../../stores/book_service_store.dart';
+import '../../stores/manage_vehicle_store.dart';
+import '../../stores/user_profile_screen_store.dart';
 import '../../theme/my_app_colors.dart';
 import '../../resources/app_images.dart';
 
 //UI
 import '../../ui/auth/login_screen.dart';
 import '../../ui/chatbox/chat_screen.dart';
+import '../../ui/home/available_shops_screen.dart';
+import '../../ui/profile/user_profile_screen.dart';
 
-import 'package:app_30_car_service_app/service_locator.dart';
+//Stores
+import '../../stores/home_screen_store.dart';
+//Services
+import '../../service_locator.dart';
+import '../manage_vehicle/add_vehicle_screen.dart';
+import '../manage_vehicle/user_vehicle_list_screen.dart';
+import '../profile/widget/display_image_widget.dart';
+import 'bookings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -19,6 +31,13 @@ class HomeScreen extends StatelessWidget {
 
   //Theme
   final AppColors _appColor = getIt<AppColors>();
+
+  //Stores
+  final HomeScreenStore _homeScreenStore = getIt<HomeScreenStore>();
+  final UserProfileScreenStore _userProfileScreenStore =
+      getIt<UserProfileScreenStore>();
+  final ManageVehicleStore _manageVehicleStore = getIt<ManageVehicleStore>();
+  final BookServiceStore _bookServiceStore = getIt<BookServiceStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +55,13 @@ class HomeScreen extends StatelessWidget {
               children: [
                 IconButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamed(ChatScreen.routeName);
+                      // Navigator.of(context).pushNamed(ChatScreen.routeName);
                     },
-                    icon: const Icon(Icons.email_outlined)),
+                    icon: const Icon(Icons.notifications)),
                 IconButton(
                     onPressed: () {
-                      Navigator.of(context)
-                          .pushReplacementNamed(LoginScreen.routeName);
+                      // Navigator.of(context)
+                      // .pushReplacementNamed(LoginScreen.routeName);
                     },
                     icon: const Icon(Icons.logout)),
               ],
@@ -54,60 +73,38 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(18.0),
             child: Column(
               children: [
-                ProfileWidget(theme: theme),
+                ProfileWidget(
+                    theme: theme,
+                    userProfileScreenStore: _userProfileScreenStore),
                 const SizedBox(height: 20),
-                BookingStats(theme: theme),
+                BookingStats(
+                    theme: theme,
+                    homeScreenStore: _homeScreenStore,
+                    manageVehicleStore: _manageVehicleStore,
+                    bookServiceStore: _bookServiceStore),
                 const SizedBox(height: 20),
                 ServiceTabs(screenWidth: screenWidth, theme: theme),
                 const SizedBox(height: 20),
-                Column(
-                  children: [
-                    Text(
-                      'History',
-                      style: theme.textTheme.headline3,
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: customContainer(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  children: [
-                                    Text(
-                                      DateFormat('d MMM y')
-                                          .format(DateTime.now())
-                                          .toString(),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      DateFormat('kk:mm')
-                                          .format(DateTime.now())
-                                          .toString(),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: screenWidth * 0.4,
-                                  child: Text(
-                                      'Shop Nameasl alskd fjals dflsjdf alskd falskdjf aslkdjf'),
-                                ),
-                                Text('PKR : 1590')
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                BookingHistoryList(
+                    screenWidth: screenWidth,
+                    theme: theme,
+                    homeScreenStore: _homeScreenStore),
                 const SizedBox(height: 20),
               ],
             ),
           ),
         ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () =>
+              Navigator.of(context).pushNamed(AddNewVehicleScreen.routeName),
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.secondary,
+          label: const Text('Add Vehicle'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
@@ -216,7 +213,7 @@ class ServiceTabs extends StatelessWidget {
                         size: 60,
                       ),
 
-                      const Text('Tyre Shop'),
+                      Text('Tyre Shop'),
                     ],
                   ),
                 ),
@@ -391,9 +388,18 @@ class CarWashServices extends StatelessWidget {
 }
 
 class BookingStats extends StatelessWidget {
-  const BookingStats({Key? key, required this.theme}) : super(key: key);
+  const BookingStats({
+    Key? key,
+    required this.theme,
+    required this.homeScreenStore,
+    required this.manageVehicleStore,
+    required this.bookServiceStore,
+  }) : super(key: key);
   final ThemeData theme;
-
+  //Stores
+  final HomeScreenStore homeScreenStore;
+  final ManageVehicleStore manageVehicleStore;
+  final BookServiceStore bookServiceStore;
   @override
   Widget build(BuildContext context) {
     return customContainer(
@@ -402,19 +408,46 @@ class BookingStats extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
+              child: InkWell(
+                onTap: () => Navigator.of(context)
+                    .pushNamed(UserVehicleListScreen.routeName),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        manageVehicleStore.userVehicleList.length.toString(),
+                        style: theme.textTheme.headline4,
+                      ),
+                      Text(
+                        'Vehicles',
+                        style: theme.textTheme.headline5,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
               child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '1',
-                      style: theme.textTheme.headline3,
-                    ),
-                    Text(
-                      'Cars',
-                      style: theme.textTheme.headline4,
-                    ),
-                  ],
+                child: InkWell(
+                  onTap: () =>
+                      Navigator.of(context).pushNamed(BookingsScreen.routeName),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Observer(builder: (_) {
+                        return Text(
+                          bookServiceStore.serviceRequestList.length.toString(),
+                          style: theme.textTheme.headline4,
+                        );
+                      }),
+                      Text(
+                        'Bookings',
+                        style: theme.textTheme.headline5,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -424,29 +457,12 @@ class BookingStats extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '1',
-                      style: theme.textTheme.headline3,
-                    ),
-                    Text(
-                      'Bookings',
+                      homeScreenStore.messages.toString(),
                       style: theme.textTheme.headline4,
                     ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
                     Text(
-                      '1',
-                      style: theme.textTheme.headline3,
-                    ),
-                    Text(
-                      'Reviews',
-                      style: theme.textTheme.headline4,
+                      'Messages',
+                      style: theme.textTheme.headline5,
                     ),
                   ],
                 ),
@@ -458,41 +474,135 @@ class BookingStats extends StatelessWidget {
 }
 
 class ProfileWidget extends StatelessWidget {
-  const ProfileWidget({Key? key, required this.theme}) : super(key: key);
+  const ProfileWidget(
+      {Key? key, required this.theme, required this.userProfileScreenStore})
+      : super(key: key);
   final ThemeData theme;
+  final UserProfileScreenStore userProfileScreenStore;
   @override
   Widget build(BuildContext context) {
     return customContainer(
       height: 120,
-      child: Row(
-        children: [
-          const Expanded(
-              child: CircleAvatar(
-            radius: 50,
-            // child: Image.asset(appLogo),
-            child: Icon(
-              Icons.person,
-              size: 40,
-            ),
-          )),
-          Expanded(
-              flex: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Hammad',
-                    style: theme.textTheme.headline3,
-                  ),
-                  Text(
-                    '+923012345678',
-                    style: theme.textTheme.headline5,
-                  ),
-                ],
-              )),
-        ],
+      child: InkWell(
+        onTap: () =>
+            Navigator.of(context).pushNamed(UserProfileScreen.routeName),
+        child: Row(
+          children: [
+            const SizedBox(width: 10),
+            Expanded(
+                child: CircleAvatar(
+              radius: 50,
+              // child: Image.asset(appLogo),
+              child: DisplayImage(
+                imagePath: userProfileScreenStore.user.userImage,
+                onPressed: () {},
+              ),
+            )),
+            Expanded(
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Hammad',
+                      style: theme.textTheme.headline3,
+                    ),
+                    Text(
+                      '+923012345678',
+                      style: theme.textTheme.headline5,
+                    ),
+                  ],
+                )),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class BookingHistoryList extends StatelessWidget {
+  const BookingHistoryList({
+    Key? key,
+    required this.screenWidth,
+    required this.theme,
+    required this.homeScreenStore,
+  }) : super(key: key);
+  //UI
+  final double screenWidth;
+  final ThemeData theme;
+
+  //Stores
+  final HomeScreenStore homeScreenStore;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          'History',
+          style: theme.textTheme.headline3,
+        ),
+        const SizedBox(height: 15),
+        Observer(builder: (_) {
+          return homeScreenStore.bookingHistoryList.isEmpty
+              ? Text(
+                  'No Record Found',
+                  style: theme.textTheme.headline4,
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: homeScreenStore.bookingHistoryList.length,
+                  itemBuilder: (context, index) => Column(
+                        children: [
+                          Row(
+                            key: ValueKey(
+                                homeScreenStore.bookingHistoryList[index]),
+                            children: [
+                              Expanded(
+                                child: customContainer(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text(
+                                            DateFormat('d MMM y')
+                                                .format(DateTime.now())
+                                                .toString(),
+                                            // style: theme.textTheme.headline6,
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            DateFormat('kk:mm a')
+                                                .format(DateTime.now())
+                                                .toString(),
+                                            // style: theme.textTheme.headline6,
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        width: screenWidth * 0.4,
+                                        child: Text(
+                                          'Shop Name',
+                                          style: theme.textTheme.headline6,
+                                        ),
+                                      ),
+                                      const Text('PKR : 1590'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ));
+        }),
+      ],
     );
   }
 }

@@ -11,17 +11,17 @@ class FunctionResponse {
     this.count = 0,
   });
 
-  void passed({String? message = ''}) {
+  void passed({String? message}) {
     success = true;
-    if ((message ?? '').isNotEmpty) {
-      message = message;
+    if (message != null) {
+      this.message = message;
     }
   }
 
-  void failed({String? message = ''}) {
+  void failed({String? message}) {
     success = false;
-    if ((message ?? '').isNotEmpty) {
-      message = message;
+    if (message != null) {
+      this.message = message;
     }
   }
 

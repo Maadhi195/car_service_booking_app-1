@@ -5,10 +5,16 @@ import '../../service_locator.dart';
 //Theme
 final AppColors _appColor = getIt<AppColors>();
 
-Widget customContainer({double? height, double? width, required Widget child}) {
+Widget customContainer(
+    {double? height,
+    double? width,
+    required Widget child,
+    EdgeInsetsGeometry? padding}) {
   return Container(
     height: height,
     width: width,
+    padding: padding,
+    clipBehavior: Clip.hardEdge,
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
         color: _appColor.accentColorLight,
@@ -19,10 +25,7 @@ Widget customContainer({double? height, double? width, required Widget child}) {
             offset: Offset(0, 1), // changes position of shadow
           ),
         ]),
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: child,
-    ),
+    child: child,
   );
 }
 
