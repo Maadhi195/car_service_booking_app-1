@@ -193,7 +193,7 @@ class AddNewVehicleScreen extends StatelessWidget {
 
   Widget vehicleDescriptionField() {
     return TextFormField(
-      validator: _customValidator.validateNonNullableString,
+      validator: _customValidator.nonNullableString,
       onSaved: (String? val) {
         if (val == null) {
           return;
@@ -210,7 +210,7 @@ class AddNewVehicleScreen extends StatelessWidget {
 
   Widget vehicleCompanyField() {
     return TextFormField(
-      validator: _customValidator.validateNonNullableString,
+      validator: _customValidator.nonNullableString,
       onSaved: (String? val) {
         if (val == null) {
           return;
@@ -227,7 +227,7 @@ class AddNewVehicleScreen extends StatelessWidget {
 
   Widget vehicleNameField() {
     return TextFormField(
-      validator: _customValidator.validateNonNullableString,
+      validator: _customValidator.nonNullableString,
       onSaved: (String? val) {
         if (val == null) {
           return;

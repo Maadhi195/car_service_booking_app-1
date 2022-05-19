@@ -5,6 +5,7 @@ class User {
   String firstName;
   String lastName;
   String email;
+  String password;
   String userImage;
   String address;
   String userBio;
@@ -14,6 +15,7 @@ class User {
     required this.firstName,
     required this.lastName,
     required this.email,
+    required this.password,
     required this.userImage,
     required this.address,
     required this.userBio,

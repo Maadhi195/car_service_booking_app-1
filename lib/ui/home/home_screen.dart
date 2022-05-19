@@ -60,8 +60,8 @@ class HomeScreen extends StatelessWidget {
                     icon: const Icon(Icons.notifications)),
                 IconButton(
                     onPressed: () {
-                      // Navigator.of(context)
-                      // .pushReplacementNamed(LoginScreen.routeName);
+                      Navigator.of(context)
+                          .pushReplacementNamed(LoginScreen.routeName);
                     },
                     icon: const Icon(Icons.logout)),
               ],

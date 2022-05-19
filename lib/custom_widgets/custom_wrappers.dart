@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../../theme/my_app_colors.dart';
 import '../../service_locator.dart';
+import '../custom_utils/image_helper.dart';
 
 //Theme
 final AppColors _appColor = getIt<AppColors>();
@@ -64,4 +67,61 @@ Widget customImageBox(double width, ThemeData _theme,
       ),
     ),
   );
+}
+
+Widget buildImage(ThemeData theme, String imagePath) {
+  final CustomImageHelper _customImageHelper = getIt<CustomImageHelper>();
+  ImageType imageType = _customImageHelper.getImageType(imagePath);
+
+  final Widget returnAble = imagePath.isEmpty
+      ? const SizedBox()
+      : (imageType == ImageType.network
+          ? Image.network(
+              imagePath,
+              fit: BoxFit.cover,
+              loadingBuilder: (BuildContext context, Widget child,
+                  ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
+              errorBuilder: (BuildContext context, Object exception,
+                  StackTrace? stackTrace) {
+                return Icon(
+                  Icons.error,
+                  color: theme.colorScheme.error,
+                );
+              },
+            )
+          : (imageType == ImageType.file
+              ? Image.file(
+                  File(imagePath),
+                  fit: BoxFit.contain,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return Icon(
+                      Icons.error,
+                      color: theme.colorScheme.error,
+                    );
+                  },
+                )
+              : Image.asset(
+                  imagePath,
+                  fit: BoxFit.fill,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return Icon(
+                      Icons.error,
+                      color: theme.colorScheme.error,
+                    );
+                  },
+                )));
+
+  return returnAble;
 }

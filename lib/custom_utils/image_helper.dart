@@ -7,7 +7,7 @@ import '../service_locator.dart';
 enum ImageType { network, file, asset, unknown }
 
 class CustomImageHelper {
-  FunctionResponse imageType(String _imagePath) {
+  ImageType getImageType(String _imagePath) {
     FunctionResponse _fResponse = getIt<FunctionResponse>();
     try {
       final String _leftSubstring = _imagePath.substring(0, 8).toLowerCase();
@@ -30,7 +30,7 @@ class CustomImageHelper {
       _fResponse.message = 'Error finding image type';
     }
 
-    return _fResponse;
+    return _fResponse.data;
   }
 
   Future<FunctionResponse> pickUserImage(BuildContext context) async {
