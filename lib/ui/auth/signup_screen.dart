@@ -114,7 +114,7 @@ class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //ThemeData & constraints
-    ThemeData _theme = Theme.of(context);
+    ThemeData theme = Theme.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
     const double topPadding = 200;
@@ -133,7 +133,7 @@ class SignupScreen extends StatelessWidget {
                   child: Container(
                     height: screenHeight * 0.35,
                     width: screenWidth,
-                    color: _theme.colorScheme.primary,
+                    color: theme.colorScheme.primary,
                     child: Center(
                       child: Image.asset(
                         appLogo,
@@ -165,8 +165,8 @@ class SignupScreen extends StatelessWidget {
                                     children: [
                                       Text(
                                         'Sign Up',
-                                        style: _theme.textTheme.headline2
-                                            ?.copyWith(
+                                        style:
+                                            theme.textTheme.headline2?.copyWith(
                                           color: _appColors.primaryColorLight,
                                         ),
                                       ),
@@ -201,7 +201,7 @@ class SignupScreen extends StatelessWidget {
                                                           BorderRadius.circular(
                                                               100),
                                                       child: buildImage(
-                                                          _theme,
+                                                          theme,
                                                           _authStore.newUser
                                                               .userImage),
                                                     ),
@@ -346,7 +346,7 @@ class SignupScreen extends StatelessWidget {
                                   const SizedBox(height: 10),
                                   Text(
                                     'Or',
-                                    style: _theme.textTheme.headline5,
+                                    style: theme.textTheme.headline5,
                                   ),
                                   const SizedBox(height: 10),
                                   Row(
@@ -359,7 +359,7 @@ class SignupScreen extends StatelessWidget {
                                                     LoginScreen.routeName);
                                           },
                                           child: const Text('Login'),
-                                          style: _theme
+                                          style: theme
                                               .elevatedButtonTheme.style!
                                               .copyWith(
                                             backgroundColor:
@@ -368,11 +368,10 @@ class SignupScreen extends StatelessWidget {
                                                         .accentColorLight),
                                             foregroundColor:
                                                 MaterialStateProperty.all(
-                                                    _theme.colorScheme.primary),
+                                                    theme.colorScheme.primary),
                                             side: MaterialStateProperty.all(
                                                 BorderSide(
-                                                    color:
-                                                        _theme.primaryColor)),
+                                                    color: theme.primaryColor)),
                                           ),
                                         ),
                                       ),

@@ -9,6 +9,23 @@ part of 'manage_vehicle_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ManageVehicleStore on _ManageVehicleStore, Store {
+  late final _$isLoadingAllVehiclesAtom =
+      Atom(name: '_ManageVehicleStore.isLoadingAllVehicles', context: context);
+
+  @override
+  bool get isLoadingAllVehicles {
+    _$isLoadingAllVehiclesAtom.reportRead();
+    return super.isLoadingAllVehicles;
+  }
+
+  @override
+  set isLoadingAllVehicles(bool value) {
+    _$isLoadingAllVehiclesAtom.reportWrite(value, super.isLoadingAllVehicles,
+        () {
+      super.isLoadingAllVehicles = value;
+    });
+  }
+
   late final _$selectedVehicleTypeAtom =
       Atom(name: '_ManageVehicleStore.selectedVehicleType', context: context);
 
@@ -66,6 +83,14 @@ mixin _$ManageVehicleStore on _ManageVehicleStore, Store {
         .run(() => super.addNewVehicleToList(newVehicle));
   }
 
+  late final _$loadAllVehiclesAsyncAction =
+      AsyncAction('_ManageVehicleStore.loadAllVehicles', context: context);
+
+  @override
+  Future<void> loadAllVehicles() {
+    return _$loadAllVehiclesAsyncAction.run(() => super.loadAllVehicles());
+  }
+
   late final _$_ManageVehicleStoreActionController =
       ActionController(name: '_ManageVehicleStore', context: context);
 
@@ -105,6 +130,7 @@ mixin _$ManageVehicleStore on _ManageVehicleStore, Store {
   @override
   String toString() {
     return '''
+isLoadingAllVehicles: ${isLoadingAllVehicles},
 selectedVehicleType: ${selectedVehicleType},
 vehicleImageList: ${vehicleImageList},
 userVehicleList: ${userVehicleList}

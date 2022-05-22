@@ -27,13 +27,13 @@ class ServiceDetails extends StatelessWidget {
 
   //Functions
   Future<void> bookService(BuildContext context, DateTime date,
-      VehicleService vehicleService) async {
+      VehicleService vehicleService, bool isRemote) async {
     FunctionResponse fResponse = getIt<FunctionResponse>();
     _customAlerts.showLoaderDialog(context);
     fResponse = await _connectivityHelper.checkInternetConnection();
     if (fResponse.success) {
-      fResponse =
-          await _bookServiceStore.createBookingRequest(date, vehicleService);
+      fResponse = await _bookServiceStore.createServiceRequest(
+          date, vehicleService, isRemote);
     }
     _customAlerts.popLoader(context);
 
@@ -56,7 +56,6 @@ class ServiceDetails extends StatelessWidget {
 
     //route Data handeling
     dynamic routeData = modalRouteHandler(context);
-
     final VehicleService vehicleService = routeData['vehicleService'];
 
     return SafeArea(
@@ -67,11 +66,11 @@ class ServiceDetails extends StatelessWidget {
           padding: const EdgeInsets.all(18.0),
           child: Column(children: [
             customContainer(
-              height: 250,
-              width: screenWidth,
-              child: Image.asset(
+              child: buildImage(
+                theme,
                 vehicleService.coverImage,
-                fit: BoxFit.cover,
+                height: 250,
+                width: screenWidth,
               ),
             ),
             const SizedBox(height: 20),
@@ -113,7 +112,8 @@ class ServiceDetails extends StatelessWidget {
                               onConfirm: (date) async {
                             print('confirm $date');
 
-                            await bookService(context, date, vehicleService);
+                            await bookService(
+                                context, date, vehicleService, false);
                           }, currentTime: DateTime.now());
                         },
                         child: const Text('Book Service'))),
@@ -124,8 +124,19 @@ class ServiceDetails extends StatelessWidget {
               children: [
                 Expanded(
                     child: ElevatedButton(
-                        onPressed: () {},
-                        child: Text('Request Mobile Service'))),
+                        onPressed: () {
+                          DatePicker.showDateTimePicker(context,
+                              showTitleActions: true,
+                              minTime: DateTime(2018, 3, 5),
+                              maxTime: DateTime(2029, 6, 7),
+                              onConfirm: (date) async {
+                            print('confirm $date');
+
+                            await bookService(
+                                context, date, vehicleService, true);
+                          }, currentTime: DateTime.now());
+                        },
+                        child: const Text('Request Mobile Service'))),
               ],
             ),
           ]),
@@ -135,7 +146,7 @@ class ServiceDetails extends StatelessWidget {
   }
 }
 
-Widget _customListItem(ThemeData _theme, String key, String value) {
+Widget _customListItem(ThemeData theme, String key, String value) {
   return Column(
     children: [
       Row(
@@ -147,7 +158,7 @@ Widget _customListItem(ThemeData _theme, String key, String value) {
                 Expanded(
                   child: Text(
                     key,
-                    style: _theme.textTheme.headline5,
+                    style: theme.textTheme.headline5,
                     softWrap: false,
                     overflow: TextOverflow.visible,
                   ),
@@ -161,7 +172,7 @@ Widget _customListItem(ThemeData _theme, String key, String value) {
                     value,
 
                     softWrap: true,
-                    style: _theme.textTheme.headline5,
+                    style: theme.textTheme.headline5,
                     // overflow: TextOverflow.ellipsis,
                   ),
                 ),

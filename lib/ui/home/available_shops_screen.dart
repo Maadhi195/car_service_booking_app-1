@@ -1,4 +1,5 @@
 import 'package:app_30_car_service_app/ui/shop/shop_screen.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../custom_widgets/custom_wrappers.dart';
 import '../../models/vehicle_service.dart';
@@ -7,65 +8,86 @@ import 'package:flutter/material.dart';
 
 import '../../service_locator.dart';
 import '../../stores/available_shops_store.dart';
-import '../book_service/service_details.dart';
+import '../book_service/service_details_screen.dart';
 
-class AvailableShopsScreen extends StatelessWidget {
+class AvailableShopsScreen extends StatefulWidget {
   AvailableShopsScreen({Key? key}) : super(key: key);
 
   static const routeName = '/available-shops-screen';
 
+  @override
+  State<AvailableShopsScreen> createState() => _AvailableShopsScreenState();
+}
+
+class _AvailableShopsScreenState extends State<AvailableShopsScreen> {
   //Stores
-  final AvailableShopeStore _availableShopeStore = getIt<AvailableShopeStore>();
+  final AvailableShopStore _availableShopStore = getIt<AvailableShopStore>();
+
+  @override
+  void initState() {
+    _availableShopStore.loadAvailableServices();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     //ThemeData & constraints
-    ThemeData _theme = Theme.of(context);
+    ThemeData theme = Theme.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Available Service Shops'),
-          centerTitle: true,
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _availableShopeStore.availableServicesList.isEmpty
-                      ? 1
-                      : _availableShopeStore.availableServicesList.length,
-                  itemBuilder: (ctx, index) => _availableShopItem(
-                      context, _theme, index, _availableShopeStore),
+      child: Observer(builder: (_) {
+        return _availableShopStore.isLoadingServices
+            ? const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator.adaptive(),
                 ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-        ),
-      ),
+              )
+            : Scaffold(
+                appBar: AppBar(
+                  title: const Text('Available Service Shops'),
+                  centerTitle: true,
+                ),
+                body: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount:
+                              _availableShopStore.availableServicesList.isEmpty
+                                  ? 1
+                                  : _availableShopStore
+                                      .availableServicesList.length,
+                          itemBuilder: (ctx, index) => _availableShopItem(
+                              context, theme, index, _availableShopStore),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+      }),
     );
   }
 
-  Widget _availableShopItem(BuildContext context, ThemeData _theme, int index,
-      AvailableShopeStore availableShopeStore) {
-    if (_availableShopeStore.availableServicesList.isEmpty) {
+  Widget _availableShopItem(BuildContext context, ThemeData theme, int index,
+      AvailableShopStore availableShopStore) {
+    if (_availableShopStore.availableServicesList.isEmpty) {
       return Center(
         child: Text(
           'No Shop Found Nearby :(',
-          style: _theme.textTheme.headline4,
+          style: theme.textTheme.headline4,
         ),
       );
     } else {
       VehicleService currentItem =
-          availableShopeStore.availableServicesList[index];
+          availableShopStore.availableServicesList[index];
       return Column(
         children: [
           InkWell(
@@ -81,9 +103,10 @@ class AvailableShopsScreen extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Image.asset(
+                        child: buildImage(
+                          theme,
                           currentItem.coverImage,
-                          fit: BoxFit.cover,
+                          height: 80,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -101,11 +124,11 @@ class AvailableShopsScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       currentItem.shopName,
-                                      style: _theme.textTheme.headline5,
+                                      style: theme.textTheme.headline5,
                                     ),
                                     Text(
                                       '${currentItem.cost} PKR',
-                                      style: _theme.textTheme.headline6,
+                                      style: theme.textTheme.headline6,
                                     ),
                                   ],
                                 ),
@@ -135,7 +158,7 @@ class AvailableShopsScreen extends StatelessWidget {
                                         const Icon(Icons.star),
                                         Text(
                                           currentItem.rating.toStringAsFixed(1),
-                                          style: _theme.textTheme.headline5,
+                                          style: theme.textTheme.headline5,
                                         )
                                       ],
                                     ),

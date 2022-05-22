@@ -9,6 +9,22 @@ part of 'book_service_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$BookServiceStore on _BookServiceStore, Store {
+  late final _$isLoadingOrdersAtom =
+      Atom(name: '_BookServiceStore.isLoadingOrders', context: context);
+
+  @override
+  bool get isLoadingOrders {
+    _$isLoadingOrdersAtom.reportRead();
+    return super.isLoadingOrders;
+  }
+
+  @override
+  set isLoadingOrders(bool value) {
+    _$isLoadingOrdersAtom.reportWrite(value, super.isLoadingOrders, () {
+      super.isLoadingOrders = value;
+    });
+  }
+
   late final _$bookingTimeAtom =
       Atom(name: '_BookServiceStore.bookingTime', context: context);
 
@@ -57,14 +73,23 @@ mixin _$BookServiceStore on _BookServiceStore, Store {
     });
   }
 
-  late final _$createBookingRequestAsyncAction =
-      AsyncAction('_BookServiceStore.createBookingRequest', context: context);
+  late final _$createServiceRequestAsyncAction =
+      AsyncAction('_BookServiceStore.createServiceRequest', context: context);
 
   @override
-  Future<FunctionResponse> createBookingRequest(
-      DateTime date, VehicleService vehicleService) {
-    return _$createBookingRequestAsyncAction
-        .run(() => super.createBookingRequest(date, vehicleService));
+  Future<FunctionResponse> createServiceRequest(
+      DateTime date, VehicleService vehicleService, bool isMobile) {
+    return _$createServiceRequestAsyncAction
+        .run(() => super.createServiceRequest(date, vehicleService, isMobile));
+  }
+
+  late final _$loadAllServiceRequestsAsyncAction =
+      AsyncAction('_BookServiceStore.loadAllServiceRequests', context: context);
+
+  @override
+  Future<void> loadAllServiceRequests() {
+    return _$loadAllServiceRequestsAsyncAction
+        .run(() => super.loadAllServiceRequests());
   }
 
   late final _$_BookServiceStoreActionController =
@@ -95,6 +120,7 @@ mixin _$BookServiceStore on _BookServiceStore, Store {
   @override
   String toString() {
     return '''
+isLoadingOrders: ${isLoadingOrders},
 bookingTime: ${bookingTime},
 vehicleService: ${vehicleService},
 serviceRequestList: ${serviceRequestList}

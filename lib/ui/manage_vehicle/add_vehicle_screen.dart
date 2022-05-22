@@ -24,6 +24,7 @@ class AddNewVehicleScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   Vehicle vehicle = Vehicle(
       id: '',
+      userId: '',
       vehicleCompany: '',
       vehicleDescription: '',
       vehicleImages: [],

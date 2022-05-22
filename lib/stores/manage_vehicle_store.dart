@@ -1,16 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 import 'package:mobx/mobx.dart';
 
 //models
+import '../constants/firebase_constants.dart';
 import '../custom_utils/function_response.dart';
 import '../custom_utils/general_helper.dart';
+import '../custom_utils/google_maps_helper.dart';
+import '../custom_utils/image_helper.dart';
+import '../models/app_user.dart';
 import '../models/vehicle.dart';
 import '../service_locator.dart';
+import 'user_profile_screen_store.dart';
 
 part 'manage_vehicle_store.g.dart';
 
 class ManageVehicleStore = _ManageVehicleStore with _$ManageVehicleStore;
 
 abstract class _ManageVehicleStore with Store {
+  _ManageVehicleStore(this._userProfileScreenStore, this._customImageHelper);
+
+  final UserProfileScreenStore _userProfileScreenStore;
+  final CustomImageHelper _customImageHelper;
+
+  @observable
+  bool isLoadingAllVehicles = false;
+
   @observable
   String selectedVehicleType = VehicleType.bike.getName();
 
@@ -45,8 +60,44 @@ abstract class _ManageVehicleStore with Store {
     newVehicle.vehicleImages = vehicleImageList;
 
     try {
-      userVehicleList.add(newVehicle);
-      fResponse.passed(message: 'Successfully added new vehicle');
+      fResponse = await _userProfileScreenStore.loadProfile();
+      fResponse.printResponse();
+
+      if (fResponse.success) {
+        AppUser currentUser = _userProfileScreenStore.currentUser;
+        List<String> newImages = [];
+        for (String image in vehicleImageList) {
+          fResponse = await _customImageHelper.uploadPicture(
+              (image), userImagesDirectory);
+          if (fResponse.success) {
+            newImages.add(fResponse.data);
+          }
+        }
+        newVehicle = Vehicle(
+          id: '',
+          userId: currentUser.id,
+          vehicleType: getVehicleTypeFromVehicleName(selectedVehicleType),
+          vehicleImages: newImages,
+          vehicleCompany: newVehicle.vehicleCompany,
+          vehicleDescription: newVehicle.vehicleDescription,
+          vehicleModel: newVehicle.vehicleModel,
+        );
+
+        final DocumentReference dbVehicle =
+            await firestoreVehiclesCollection.add({
+          'userId': newVehicle.userId,
+          'vehicleType': newVehicle.vehicleType.getName(),
+          'vehicleImages': newVehicle.vehicleImages,
+          'vehicleCompany': newVehicle.vehicleCompany,
+          'vehicleDescription': newVehicle.vehicleDescription,
+          'vehicleModel': newVehicle.vehicleModel,
+        });
+        newVehicle.id = dbVehicle.id;
+        userVehicleList.add(newVehicle);
+        fResponse.passed(message: 'Vehicle Added Successfull');
+      } else {
+        fResponse.failed(message: 'Current User not found');
+      }
     } catch (e) {
       fResponse.failed(message: 'Unable to add new Vehicle : $e');
     }
@@ -59,5 +110,51 @@ abstract class _ManageVehicleStore with Store {
     print('total vehicles : ${userVehicleList.length}');
     vehicleImageList.clear();
     return fResponse;
+  }
+
+  @action
+  @action
+  Future<void> loadAllVehicles() async {
+    isLoadingAllVehicles = true;
+
+    try {
+      if (firebaseAuth.currentUser?.uid == null) {
+        return;
+      }
+
+      userVehicleList.clear();
+
+      await firestoreVehiclesCollection
+          .get()
+          .then((QuerySnapshot querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          print(' total vehicles found : ${querySnapshot.docs.length}');
+          if (doc['userId'] == firebaseAuth.currentUser!.uid) {
+            print('id : ${doc.id}');
+            List<String> imagesList = [];
+            List<dynamic> dbImages = doc['vehicleImages'];
+            print('total Images : ${dbImages.length}');
+
+            for (var e in dbImages) {
+              imagesList.add(e as String);
+            }
+
+            userVehicleList.add(Vehicle(
+              id: doc.id,
+              userId: doc['userId'],
+              vehicleCompany: doc['vehicleCompany'],
+              vehicleDescription: doc['vehicleCompany'],
+              vehicleModel: doc['vehicleModel'],
+              vehicleImages: imagesList,
+              vehicleType: getVehicleTypeFromVehicleName(doc['vehicleType']),
+            ));
+          }
+        }
+      });
+    } catch (e) {
+      print('Error loading all Vehicles : $e');
+    }
+
+    isLoadingAllVehicles = false;
   }
 }

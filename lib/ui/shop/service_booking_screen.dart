@@ -9,7 +9,7 @@ class ServiceBookingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //ThemeData & constraints
-    ThemeData _theme = Theme.of(context);
+    ThemeData theme = Theme.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -21,11 +21,11 @@ class ServiceBookingScreen extends StatelessWidget {
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              _vehicleDescriptionList(_theme),
+              _vehicleDescriptionList(theme),
               const SizedBox(height: 20),
-              _bookingDetailsList(_theme),
+              _bookingDetailsList(theme),
               const SizedBox(height: 20),
-              _serviceDetails(_theme),
+              _serviceDetails(theme),
               const SizedBox(height: 20),
             ],
           ),
@@ -52,23 +52,23 @@ class ServiceBookingScreen extends StatelessWidget {
     );
   }
 
-  Widget _serviceDetails(ThemeData _theme) {
+  Widget _serviceDetails(ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30.0),
       child: Column(
         children: [
-          _customListItem(_theme, 'Service Details', '100\$'),
+          _customListItem(theme, 'Service Details', '100\$'),
           const SizedBox(height: 20),
           Text(
             'Full Car Wash',
-            style: _theme.textTheme.headline4,
+            style: theme.textTheme.headline4,
           )
         ],
       ),
     );
   }
 
-  Widget _bookingDetailsList(ThemeData _theme) {
+  Widget _bookingDetailsList(ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30.0),
       child: Column(
@@ -76,7 +76,7 @@ class ServiceBookingScreen extends StatelessWidget {
         children: [
           Text(
             'Booking Details',
-            style: _theme.textTheme.headline3,
+            style: theme.textTheme.headline3,
           ),
           const SizedBox(height: 10),
           customContainer(
@@ -84,9 +84,9 @@ class ServiceBookingScreen extends StatelessWidget {
             child: Column(
               children: [
                 _customListItem(
-                    _theme, 'Date', DateFormat('d M y').format(DateTime.now())),
-                _customListItem(_theme, 'Duration', '90 minutes'),
-                _customListItem(_theme, 'Address', 'south park, london'),
+                    theme, 'Date', DateFormat('d M y').format(DateTime.now())),
+                _customListItem(theme, 'Duration', '90 minutes'),
+                _customListItem(theme, 'Address', 'south park, london'),
               ],
             ),
           ),
@@ -95,7 +95,7 @@ class ServiceBookingScreen extends StatelessWidget {
     );
   }
 
-  Widget _customListItem(ThemeData _theme, String key, String value) {
+  Widget _customListItem(ThemeData theme, String key, String value) {
     return Column(
       children: [
         Row(
@@ -106,12 +106,12 @@ class ServiceBookingScreen extends StatelessWidget {
                 children: [
                   Text(
                     key,
-                    style: _theme.textTheme.headline5,
+                    style: theme.textTheme.headline5,
                   ),
                   Text(
                     value,
                     softWrap: true,
-                    style: _theme.textTheme.headline5,
+                    style: theme.textTheme.headline5,
                   ),
                 ],
               ),
@@ -123,7 +123,7 @@ class ServiceBookingScreen extends StatelessWidget {
     );
   }
 
-  Widget _vehicleDescriptionList(ThemeData _theme) {
+  Widget _vehicleDescriptionList(ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30.0),
       child: Column(
@@ -131,17 +131,17 @@ class ServiceBookingScreen extends StatelessWidget {
         children: [
           Text(
             'Vehicle Decription',
-            style: _theme.textTheme.headline3,
+            style: theme.textTheme.headline3,
           ),
           const SizedBox(height: 10),
           customContainer(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                _customListItem(_theme, 'Car Brand', 'Audi A6'),
-                _customListItem(_theme, 'Model', 'Audi A6'),
-                _customListItem(_theme, 'Reg. No', '2345'),
-                _customListItem(_theme, 'Color', 'Black'),
+                _customListItem(theme, 'Car Brand', 'Audi A6'),
+                _customListItem(theme, 'Model', 'Audi A6'),
+                _customListItem(theme, 'Reg. No', '2345'),
+                _customListItem(theme, 'Color', 'Black'),
               ],
             ),
           ),

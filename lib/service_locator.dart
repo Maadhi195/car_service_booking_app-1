@@ -48,7 +48,12 @@ Future<void> setupLocator() async {
   getIt.registerSingleton(HomeScreenStore(
     getIt<UserProfileScreenStore>(),
   ));
-  getIt.registerSingleton(ManageVehicleStore());
-  getIt.registerSingleton(AvailableShopeStore());
-  getIt.registerSingleton(BookServiceStore());
+  getIt.registerSingleton(ManageVehicleStore(
+    getIt<UserProfileScreenStore>(),
+    getIt<CustomImageHelper>(),
+  ));
+  getIt.registerSingleton(AvailableShopStore());
+  getIt.registerSingleton(BookServiceStore(
+    getIt<UserProfileScreenStore>(),
+  ));
 }

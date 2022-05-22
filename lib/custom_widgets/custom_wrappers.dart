@@ -8,14 +8,17 @@ import '../custom_utils/image_helper.dart';
 //Theme
 final AppColors _appColor = getIt<AppColors>();
 
-Widget customContainer(
-    {double? height,
-    double? width,
-    required Widget child,
-    EdgeInsetsGeometry? padding}) {
+Widget customContainer({
+  double? height,
+  double? width,
+  required Widget child,
+  EdgeInsetsGeometry? padding,
+  EdgeInsetsGeometry? margin,
+}) {
   return Container(
     height: height,
     width: width,
+    margin: margin ?? const EdgeInsetsDirectional.only(bottom: 20),
     padding: padding,
     clipBehavior: Clip.hardEdge,
     decoration: BoxDecoration(
@@ -32,7 +35,7 @@ Widget customContainer(
   );
 }
 
-Widget customImageBox(double width, ThemeData _theme,
+Widget customImageBox(double width, ThemeData theme,
     {required String image,
     Key? key,
     required String title,
@@ -40,7 +43,7 @@ Widget customImageBox(double width, ThemeData _theme,
     Function()? onTap}) {
   final CustomImageHelper _customImageHelper = getIt<CustomImageHelper>();
   ImageType imageType = _customImageHelper.getImageType(image);
-
+  double imageHeight = 200;
   return InkWell(
     key: key,
     onTap: onTap,
@@ -50,15 +53,15 @@ Widget customImageBox(double width, ThemeData _theme,
           imageType == ImageType.file
               ? Image.file(
                   File(image),
-                  width: width * 0.9,
-                  height: width * 0.9,
+                  // width: width * 0.9,
+                  height: imageHeight,
                   fit: BoxFit.cover,
                 )
               : (imageType == ImageType.network
                   ? CachedNetworkImage(
                       imageUrl: image,
-                      width: width * 0.9,
-                      height: width * 0.9,
+                      // width: width * 0.9,
+                      height: imageHeight,
                       fit: BoxFit.cover,
                       progressIndicatorBuilder:
                           (context, url, downloadProgress) => Center(
@@ -69,14 +72,14 @@ Widget customImageBox(double width, ThemeData _theme,
                     )
                   : Image.asset(
                       image,
-                      width: width * 0.9,
-                      height: width * 0.9,
+                      // width: width * 0.9,
+                      height: imageHeight,
                       fit: BoxFit.cover,
                     )),
           const SizedBox(height: 10),
           Text(
             title,
-            style: _theme.textTheme.headline4,
+            style: theme.textTheme.headline4,
           ),
           price != null
               ? Column(
@@ -84,7 +87,7 @@ Widget customImageBox(double width, ThemeData _theme,
                     const SizedBox(height: 10),
                     Text(
                       '\$ $price',
-                      style: _theme.textTheme.headline4,
+                      style: theme.textTheme.headline4,
                     ),
                   ],
                 )
@@ -95,7 +98,8 @@ Widget customImageBox(double width, ThemeData _theme,
   );
 }
 
-Widget buildImage(ThemeData theme, String imagePath) {
+Widget buildImage(ThemeData theme, String imagePath,
+    {double? height, double? width}) {
   final CustomImageHelper _customImageHelper = getIt<CustomImageHelper>();
   ImageType imageType = _customImageHelper.getImageType(imagePath);
 
@@ -105,6 +109,8 @@ Widget buildImage(ThemeData theme, String imagePath) {
           ? CachedNetworkImage(
               imageUrl: imagePath,
               fit: BoxFit.cover,
+              height: height,
+              width: width,
               progressIndicatorBuilder: (context, url, downloadProgress) =>
                   Center(
                       child: CircularProgressIndicator(
@@ -115,6 +121,8 @@ Widget buildImage(ThemeData theme, String imagePath) {
           : (imageType == ImageType.file
               ? Image.file(
                   File(imagePath),
+                  height: height,
+                  width: width,
                   fit: BoxFit.cover,
                   errorBuilder: (BuildContext context, Object exception,
                       StackTrace? stackTrace) {
@@ -126,6 +134,8 @@ Widget buildImage(ThemeData theme, String imagePath) {
                 )
               : Image.asset(
                   imagePath,
+                  height: height,
+                  width: width,
                   fit: BoxFit.fill,
                   errorBuilder: (BuildContext context, Object exception,
                       StackTrace? stackTrace) {

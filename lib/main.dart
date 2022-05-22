@@ -9,8 +9,9 @@ import 'theme/light_theme.dart';
 //Screens
 import 'ui/auth/login_screen.dart';
 import 'ui/auth/signup_screen.dart';
-import 'ui/book_service/service_details.dart';
+import 'ui/book_service/service_details_screen.dart';
 import 'ui/custom_widgets/get_location_screen.dart';
+import 'ui/home/booking_details.dart';
 import 'ui/home/bookings_screen.dart';
 import 'ui/home/home_screen.dart';
 import 'ui/home/available_shops_screen.dart';
@@ -83,6 +84,7 @@ class _MyAppState extends State<MyApp> {
         // PaymentScreen.routeName: (ctx) => PaymentScreen(),
         BookingsScreen.routeName: (ctx) => BookingsScreen(),
         GetLocationScreen.routeName: (ctx) => GetLocationScreen(),
+        BookingDetailsScreen.routeName: (ctx) => BookingDetailsScreen(),
       },
     );
   }

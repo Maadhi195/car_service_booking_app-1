@@ -15,7 +15,7 @@ class ShopScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //ThemeData & constraints
-    ThemeData _theme = Theme.of(context);
+    ThemeData theme = Theme.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -40,7 +40,7 @@ class ShopScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Perfect Car Services',
-                          style: _theme.textTheme.headline3,
+                          style: theme.textTheme.headline3,
                         ),
                         const Expanded(child: SizedBox()),
                         const Icon(Icons.favorite_border),
@@ -59,7 +59,7 @@ class ShopScreen extends StatelessWidget {
                             child: Text(
                               '11th downing street, emblem avenue, south park, london',
                               softWrap: true,
-                              style: _theme.textTheme.headline5,
+                              style: theme.textTheme.headline5,
                             ),
                           ),
                         ),
@@ -71,14 +71,14 @@ class ShopScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   rating.toString(),
-                                  style: _theme.textTheme.headline5,
+                                  style: theme.textTheme.headline5,
                                 ),
                                 const SizedBox(width: 10.0),
                                 const Icon(Icons.star),
                                 const SizedBox(width: 10.0),
                                 Text(
                                   '($reviewsCount Reviews)',
-                                  style: _theme.textTheme.headline5,
+                                  style: theme.textTheme.headline5,
                                 ),
                               ],
                             ),
@@ -101,44 +101,44 @@ class ShopScreen extends StatelessWidget {
                         children: [
                           Expanded(
                               child: Container(
-                            color: _theme.colorScheme.primary,
+                            color: theme.colorScheme.primary,
                             padding: const EdgeInsets.all(10.0),
                             child: Center(
                                 child: Text(
                               'Services',
-                              style: _theme.textTheme.headline5,
+                              style: theme.textTheme.headline5,
                             )),
                           )),
                           Expanded(
                             child: Container(
-                              color: _theme.colorScheme.secondary,
+                              color: theme.colorScheme.secondary,
                               padding: const EdgeInsets.all(10.0),
                               child: Center(
                                   child: Text(
                                 'About',
-                                style: _theme.textTheme.headline5,
+                                style: theme.textTheme.headline5,
                               )),
                             ),
                           ),
                           Expanded(
                               child: Container(
-                            color: _theme.colorScheme.secondary,
+                            color: theme.colorScheme.secondary,
                             padding: const EdgeInsets.all(10.0),
                             child: Center(
                                 child: Text(
                               'Reviews',
-                              style: _theme.textTheme.headline5,
+                              style: theme.textTheme.headline5,
                             )),
                           )),
                         ],
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _carWashServices(context, _theme, screenWidth),
+                    _carWashServices(context, theme, screenWidth),
                     const SizedBox(height: 20),
-                    _workshopServices(context, _theme, screenWidth),
+                    _workshopServices(context, theme, screenWidth),
                     const SizedBox(height: 20),
-                    _tyreServices(context, _theme, screenWidth),
+                    _tyreServices(context, theme, screenWidth),
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -151,12 +151,12 @@ class ShopScreen extends StatelessWidget {
   }
 
   Widget _tyreServices(
-      BuildContext context, ThemeData _theme, double screenWidth) {
+      BuildContext context, ThemeData theme, double screenWidth) {
     return Column(
       children: [
         Text(
           'Tyre Shop',
-          style: _theme.textTheme.headline3,
+          style: theme.textTheme.headline3,
         ),
         const SizedBox(height: 20),
         Row(
@@ -164,7 +164,7 @@ class ShopScreen extends StatelessWidget {
             Expanded(child: Container()),
             customImageBox(
               screenWidth * 0.4,
-              _theme,
+              theme,
               image: carTyreChangeServiceImage,
               title: 'Tyre Change',
               price: 50,
@@ -175,7 +175,7 @@ class ShopScreen extends StatelessWidget {
             const SizedBox(width: 20),
             customImageBox(
               screenWidth * 0.4,
-              _theme,
+              theme,
               image: carTyreRepairServiceImage,
               title: 'Tyre Repair',
               price: 25,
@@ -191,12 +191,12 @@ class ShopScreen extends StatelessWidget {
   }
 
   Widget _workshopServices(
-      BuildContext context, ThemeData _theme, double screenWidth) {
+      BuildContext context, ThemeData theme, double screenWidth) {
     return Column(
       children: [
         Text(
           'Workshop Services',
-          style: _theme.textTheme.headline3,
+          style: theme.textTheme.headline3,
         ),
         const SizedBox(height: 20),
         Row(
@@ -204,7 +204,7 @@ class ShopScreen extends StatelessWidget {
             Expanded(child: Container()),
             customImageBox(
               screenWidth * 0.4,
-              _theme,
+              theme,
               image: oilChangeServiceImage,
               title: 'Oil Change',
               price: 50,
@@ -215,7 +215,7 @@ class ShopScreen extends StatelessWidget {
             const SizedBox(width: 20),
             customImageBox(
               screenWidth * 0.4,
-              _theme,
+              theme,
               image: breakServiceImage,
               title: 'Break Service',
               price: 25,
@@ -232,7 +232,7 @@ class ShopScreen extends StatelessWidget {
             Expanded(child: Container()),
             customImageBox(
               screenWidth * 0.4,
-              _theme,
+              theme,
               image: fullCarServiceImage,
               title: 'Full Car Service',
               price: 50,
@@ -243,7 +243,7 @@ class ShopScreen extends StatelessWidget {
             const SizedBox(width: 20),
             customImageBox(
               screenWidth * 0.4,
-              _theme,
+              theme,
               image: batteryServiceImage,
               title: 'Battery Service',
               price: 25,
@@ -260,12 +260,12 @@ class ShopScreen extends StatelessWidget {
   }
 
   Widget _carWashServices(
-      BuildContext context, ThemeData _theme, double screenWidth) {
+      BuildContext context, ThemeData theme, double screenWidth) {
     return Column(
       children: [
         Text(
           'Car Wash',
-          style: _theme.textTheme.headline3,
+          style: theme.textTheme.headline3,
         ),
         const SizedBox(height: 20),
         Row(
@@ -273,7 +273,7 @@ class ShopScreen extends StatelessWidget {
             Expanded(child: Container()),
             customImageBox(
               screenWidth * 0.4,
-              _theme,
+              theme,
               image: fullCarWashServiceImage,
               title: 'Full Car Wash',
               price: 50,
@@ -284,7 +284,7 @@ class ShopScreen extends StatelessWidget {
             const SizedBox(width: 20),
             customImageBox(
               screenWidth * 0.4,
-              _theme,
+              theme,
               image: halfCarWashServiceImage,
               title: 'Half Car Wash',
               price: 25,

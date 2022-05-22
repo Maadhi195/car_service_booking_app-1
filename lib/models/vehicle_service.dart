@@ -1,23 +1,35 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'vehicle.dart' show VehicleType;
+
 class VehicleService {
   String id;
   String coverImage;
   String shopName;
+  String shopId;
+  String serviceName;
   String description;
   ServiceType serviceType;
-  int rating;
-  double distance;
+  VehicleType vehicleType;
+  double rating;
   double cost;
   String address;
+  double distance;
+  LatLng shopLocation;
   VehicleService({
     required this.id,
+    required this.shopId,
     required this.coverImage,
     required this.shopName,
+    required this.serviceName,
     required this.description,
     required this.serviceType,
+    required this.vehicleType,
     required this.rating,
-    required this.distance,
     required this.cost,
     required this.address,
+    required this.distance,
+    required this.shopLocation,
   });
 }
 

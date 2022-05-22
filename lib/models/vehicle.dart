@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class Vehicle {
   String id;
+  String userId;
   String vehicleModel;
   String vehicleCompany;
   VehicleType vehicleType;
@@ -9,6 +10,7 @@ class Vehicle {
   List<String> vehicleImages;
   Vehicle({
     required this.id,
+    required this.userId,
     required this.vehicleModel,
     required this.vehicleCompany,
     required this.vehicleDescription,

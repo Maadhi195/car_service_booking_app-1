@@ -27,7 +27,6 @@ class LoginScreen extends StatelessWidget {
   //Custom Utils
   final CustomValidator _customValidator = getIt<CustomValidator>();
   final CustomAlerts _customAlerts = getIt<CustomAlerts>();
-  final CustomImageHelper _customImageHelper = getIt<CustomImageHelper>();
   final CustomFormHelper _customFormHelper = getIt<CustomFormHelper>();
   final ConnectivityHelper _connectivityHelper = getIt<ConnectivityHelper>();
 
@@ -65,7 +64,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //ThemeData & constraints
-    ThemeData _theme = Theme.of(context);
+    ThemeData theme = Theme.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
     const double topPadding = 200;
@@ -76,7 +75,7 @@ class LoginScreen extends StatelessWidget {
           children: [
             Container(
               height: screenHeight * 0.35,
-              color: _theme.colorScheme.primary,
+              color: theme.colorScheme.primary,
               child: Center(
                 child: Image.asset(
                   appLogo,
@@ -105,7 +104,7 @@ class LoginScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   'Sign In',
-                                  style: _theme.textTheme.headline2?.copyWith(
+                                  style: theme.textTheme.headline2?.copyWith(
                                     color: _appColors.primaryColorLight,
                                   ),
                                 ),
@@ -157,7 +156,7 @@ class LoginScreen extends StatelessWidget {
                             const SizedBox(height: 10),
                             Text(
                               'Or',
-                              style: _theme.textTheme.headline5,
+                              style: theme.textTheme.headline5,
                             ),
                             const SizedBox(height: 10),
                             Row(
@@ -170,17 +169,17 @@ class LoginScreen extends StatelessWidget {
                                               SignupScreen.routeName);
                                     },
                                     child: const Text('Register'),
-                                    style: _theme.elevatedButtonTheme.style!
+                                    style: theme.elevatedButtonTheme.style!
                                         .copyWith(
                                       backgroundColor:
                                           MaterialStateProperty.all(
                                               _appColors.accentColorLight),
                                       foregroundColor:
                                           MaterialStateProperty.all(
-                                              _theme.colorScheme.primary),
+                                              theme.colorScheme.primary),
                                       side: MaterialStateProperty.all(
                                           BorderSide(
-                                              color: _theme.primaryColor)),
+                                              color: theme.primaryColor)),
                                     ),
                                   ),
                                 ),

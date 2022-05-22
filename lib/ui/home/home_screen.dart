@@ -1,3 +1,4 @@
+import 'package:app_30_car_service_app/models/vehicle_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -9,6 +10,9 @@ import '../../custom_utils/google_maps_helper.dart';
 import '../../custom_widgets/custom_wrappers.dart';
 import 'package:flutter/material.dart';
 //Theme
+import '../../models/service_request.dart';
+import '../../models/vehicle.dart';
+import '../../stores/available_shops_store.dart';
 import '../../stores/book_service_store.dart';
 import '../../stores/manage_vehicle_store.dart';
 import '../../stores/user_profile_screen_store.dart';
@@ -49,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
       getIt<UserProfileScreenStore>();
 
   final ManageVehicleStore _manageVehicleStore = getIt<ManageVehicleStore>();
+  final AvailableShopStore _availableShopStore = getIt<AvailableShopStore>();
 
   final BookServiceStore _bookServiceStore = getIt<BookServiceStore>();
 
@@ -127,30 +132,47 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Column(
-                      children: [
-                        ProfileWidget(
-                            theme: theme,
-                            userProfileScreenStore: _userProfileScreenStore),
-                        const SizedBox(height: 20),
-                        BookingStats(
-                            theme: theme,
-                            homeScreenStore: _homeScreenStore,
-                            manageVehicleStore: _manageVehicleStore,
-                            bookServiceStore: _bookServiceStore),
-                        const SizedBox(height: 20),
-                        ServiceTabs(screenWidth: screenWidth, theme: theme),
-                        const SizedBox(height: 20),
-                        BookingHistoryList(
-                            screenWidth: screenWidth,
-                            theme: theme,
-                            homeScreenStore: _homeScreenStore),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
+                body: RefreshIndicator(
+                  onRefresh: () async {
+                    await _bookServiceStore.loadAllServiceRequests();
+                  },
+                  child: Stack(
+                    children: [
+                      SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: Column(
+                            children: [
+                              ProfileWidget(
+                                  theme: theme,
+                                  userProfileScreenStore:
+                                      _userProfileScreenStore),
+                              const SizedBox(height: 20),
+                              BookingStats(
+                                  theme: theme,
+                                  homeScreenStore: _homeScreenStore,
+                                  manageVehicleStore: _manageVehicleStore,
+                                  bookServiceStore: _bookServiceStore),
+                              const SizedBox(height: 20),
+                              ServiceTabs(
+                                screenWidth: screenWidth,
+                                theme: theme,
+                                manageVehicleStore: _manageVehicleStore,
+                                availableShopStore: _availableShopStore,
+                              ),
+                              const SizedBox(height: 20),
+                              BookingHistoryList(
+                                screenWidth: screenWidth,
+                                theme: theme,
+                                homeScreenStore: _homeScreenStore,
+                                bookServiceStore: _bookServiceStore,
+                              ),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 floatingActionButton: FloatingActionButton.extended(
@@ -171,11 +193,17 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class ServiceTabs extends StatelessWidget {
-  const ServiceTabs({Key? key, required this.theme, required this.screenWidth})
+  const ServiceTabs(
+      {Key? key,
+      required this.theme,
+      required this.screenWidth,
+      required this.manageVehicleStore,
+      required this.availableShopStore})
       : super(key: key);
   final ThemeData theme;
   final double screenWidth;
-
+  final ManageVehicleStore manageVehicleStore;
+  final AvailableShopStore availableShopStore;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -195,7 +223,11 @@ class ServiceTabs extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return CarWashServices(
-                            theme: theme, screenWidth: screenWidth);
+                          theme: theme,
+                          screenWidth: screenWidth,
+                          manageVehicleStore: manageVehicleStore,
+                          availableShopStore: availableShopStore,
+                        );
                       });
                 },
                 child: customContainer(
@@ -225,7 +257,11 @@ class ServiceTabs extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return WorkShopServices(
-                            theme: theme, screenWidth: screenWidth);
+                          theme: theme,
+                          screenWidth: screenWidth,
+                          manageVehicleStore: manageVehicleStore,
+                          availableShopStore: availableShopStore,
+                        );
                       });
                 },
                 child: customContainer(
@@ -256,7 +292,11 @@ class ServiceTabs extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return TyreShopServices(
-                            theme: theme, screenWidth: screenWidth);
+                          theme: theme,
+                          screenWidth: screenWidth,
+                          manageVehicleStore: manageVehicleStore,
+                          availableShopStore: availableShopStore,
+                        );
                       });
                 },
                 child: customContainer(
@@ -288,10 +328,16 @@ class ServiceTabs extends StatelessWidget {
 
 class TyreShopServices extends StatelessWidget {
   const TyreShopServices(
-      {Key? key, required this.theme, required this.screenWidth})
+      {Key? key,
+      required this.theme,
+      required this.screenWidth,
+      required this.manageVehicleStore,
+      required this.availableShopStore})
       : super(key: key);
   final ThemeData theme;
   final double screenWidth;
+  final ManageVehicleStore manageVehicleStore;
+  final AvailableShopStore availableShopStore;
 
   @override
   Widget build(BuildContext context) {
@@ -311,8 +357,9 @@ class TyreShopServices extends StatelessWidget {
               theme,
               image: carTyreChangeServiceImage,
               title: 'Tyre Change',
-              onTap: () {
-                Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
+              onTap: () async {
+                await findService(context, theme, ServiceType.tyreChange,
+                    manageVehicleStore, availableShopStore);
               },
             ),
             const SizedBox(height: 20),
@@ -321,8 +368,9 @@ class TyreShopServices extends StatelessWidget {
               theme,
               image: carTyreRepairServiceImage,
               title: 'Tyre Repair',
-              onTap: () {
-                Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
+              onTap: () async {
+                await findService(context, theme, ServiceType.tyreRepair,
+                    manageVehicleStore, availableShopStore);
               },
             ),
             const SizedBox(height: 20),
@@ -335,10 +383,16 @@ class TyreShopServices extends StatelessWidget {
 
 class WorkShopServices extends StatelessWidget {
   const WorkShopServices(
-      {Key? key, required this.theme, required this.screenWidth})
+      {Key? key,
+      required this.theme,
+      required this.screenWidth,
+      required this.manageVehicleStore,
+      required this.availableShopStore})
       : super(key: key);
   final ThemeData theme;
   final double screenWidth;
+  final ManageVehicleStore manageVehicleStore;
+  final AvailableShopStore availableShopStore;
 
   @override
   Widget build(BuildContext context) {
@@ -358,8 +412,9 @@ class WorkShopServices extends StatelessWidget {
               theme,
               image: oilChangeServiceImage,
               title: 'Oil Change',
-              onTap: () {
-                Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
+              onTap: () async {
+                await findService(context, theme, ServiceType.oilChange,
+                    manageVehicleStore, availableShopStore);
               },
             ),
             const SizedBox(height: 20),
@@ -368,8 +423,9 @@ class WorkShopServices extends StatelessWidget {
               theme,
               image: breakServiceImage,
               title: 'Break Service',
-              onTap: () {
-                Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
+              onTap: () async {
+                await findService(context, theme, ServiceType.breakService,
+                    manageVehicleStore, availableShopStore);
               },
             ),
             const SizedBox(height: 20),
@@ -378,8 +434,9 @@ class WorkShopServices extends StatelessWidget {
               theme,
               image: fullCarServiceImage,
               title: 'Car Service',
-              onTap: () {
-                Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
+              onTap: () async {
+                await findService(context, theme, ServiceType.carService,
+                    manageVehicleStore, availableShopStore);
               },
             ),
             const SizedBox(height: 20),
@@ -388,8 +445,9 @@ class WorkShopServices extends StatelessWidget {
               theme,
               image: batteryServiceImage,
               title: 'Battery Issue',
-              onTap: () {
-                Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
+              onTap: () async {
+                await findService(context, theme, ServiceType.batteryIssue,
+                    manageVehicleStore, availableShopStore);
               },
             ),
             const SizedBox(height: 20),
@@ -402,10 +460,16 @@ class WorkShopServices extends StatelessWidget {
 
 class CarWashServices extends StatelessWidget {
   const CarWashServices(
-      {Key? key, required this.theme, required this.screenWidth})
+      {Key? key,
+      required this.theme,
+      required this.screenWidth,
+      required this.manageVehicleStore,
+      required this.availableShopStore})
       : super(key: key);
   final ThemeData theme;
   final double screenWidth;
+  final ManageVehicleStore manageVehicleStore;
+  final AvailableShopStore availableShopStore;
 
   @override
   Widget build(BuildContext context) {
@@ -425,8 +489,9 @@ class CarWashServices extends StatelessWidget {
               theme,
               image: halfCarWashServiceImage,
               title: 'Half Car Wash',
-              onTap: () {
-                Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
+              onTap: () async {
+                await findService(context, theme, ServiceType.halfCarWash,
+                    manageVehicleStore, availableShopStore);
               },
             ),
             const SizedBox(height: 20),
@@ -435,8 +500,9 @@ class CarWashServices extends StatelessWidget {
               theme,
               image: fullCarWashServiceImage,
               title: 'Full Car Wash',
-              onTap: () {
-                Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
+              onTap: () async {
+                await findService(context, theme, ServiceType.fullCarWash,
+                    manageVehicleStore, availableShopStore);
               },
             ),
             const SizedBox(height: 20),
@@ -468,48 +534,12 @@ class BookingStats extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              child: InkWell(
-                onTap: () => Navigator.of(context)
-                    .pushNamed(UserVehicleListScreen.routeName),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        manageVehicleStore.userVehicleList.length.toString(),
-                        style: theme.textTheme.headline4,
-                      ),
-                      Text(
-                        'Vehicles',
-                        style: theme.textTheme.headline5,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              child: VehiclesTab(
+                  manageVehicleStore: manageVehicleStore, theme: theme),
             ),
             Expanded(
-              child: Center(
-                child: InkWell(
-                  onTap: () =>
-                      Navigator.of(context).pushNamed(BookingsScreen.routeName),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Observer(builder: (_) {
-                        return Text(
-                          bookServiceStore.serviceRequestList.length.toString(),
-                          style: theme.textTheme.headline4,
-                        );
-                      }),
-                      Text(
-                        'Bookings',
-                        style: theme.textTheme.headline5,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              child:
+                  BookingsTab(bookServiceStore: bookServiceStore, theme: theme),
             ),
             Expanded(
               child: Center(
@@ -533,6 +563,119 @@ class BookingStats extends StatelessWidget {
   }
 }
 
+class BookingsTab extends StatefulWidget {
+  const BookingsTab({
+    Key? key,
+    required this.bookServiceStore,
+    required this.theme,
+  }) : super(key: key);
+
+  final BookServiceStore bookServiceStore;
+  final ThemeData theme;
+
+  @override
+  State<BookingsTab> createState() => _BookingsTabState();
+}
+
+class _BookingsTabState extends State<BookingsTab> {
+  @override
+  void initState() {
+    widget.bookServiceStore.loadAllServiceRequests();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Observer(builder: (_) {
+      return widget.bookServiceStore.isLoadingOrders
+          ? const Center(
+              child: CircularProgressIndicator.adaptive(),
+            )
+          : Center(
+              child: InkWell(
+                onTap: () =>
+                    Navigator.of(context).pushNamed(BookingsScreen.routeName),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Observer(builder: (_) {
+                      return Text(
+                        widget.bookServiceStore.serviceRequestList
+                            .where((element) =>
+                                element.serviceRequestStatus ==
+                                ServiceRequestStatus.idle)
+                            .toList()
+                            .length
+                            .toString(),
+                        style: widget.theme.textTheme.headline4,
+                      );
+                    }),
+                    Text(
+                      'Bookings',
+                      style: widget.theme.textTheme.headline5,
+                    ),
+                  ],
+                ),
+              ),
+            );
+    });
+  }
+}
+
+class VehiclesTab extends StatefulWidget {
+  const VehiclesTab({
+    Key? key,
+    required this.manageVehicleStore,
+    required this.theme,
+  }) : super(key: key);
+
+  final ManageVehicleStore manageVehicleStore;
+  final ThemeData theme;
+
+  @override
+  State<VehiclesTab> createState() => _VehiclesTabState();
+}
+
+class _VehiclesTabState extends State<VehiclesTab> {
+  @override
+  void initState() {
+    widget.manageVehicleStore.loadAllVehicles();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Observer(builder: (_) {
+      return widget.manageVehicleStore.isLoadingAllVehicles
+          ? const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator.adaptive(),
+              ),
+            )
+          : InkWell(
+              onTap: () => Navigator.of(context)
+                  .pushNamed(UserVehicleListScreen.routeName),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.manageVehicleStore.userVehicleList.length
+                          .toString(),
+                      style: widget.theme.textTheme.headline4,
+                    ),
+                    Text(
+                      'Vehicles',
+                      style: widget.theme.textTheme.headline5,
+                    ),
+                  ],
+                ),
+              ),
+            );
+    });
+  }
+}
+
 class ProfileWidget extends StatelessWidget {
   const ProfileWidget(
       {Key? key, required this.theme, required this.userProfileScreenStore})
@@ -550,12 +693,14 @@ class ProfileWidget extends StatelessWidget {
           children: [
             const SizedBox(width: 10),
             Expanded(
-                child: CircleAvatar(
-              radius: 50,
-              // child: Image.asset(appLogo),
-              child: DisplayImage(
-                imagePath: userProfileScreenStore.currentUser.userImage,
-                onPressed: () {},
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(200),
+                child: buildImage(
+                  theme,
+                  userProfileScreenStore.currentUser.userImage,
+                ),
               ),
             )),
             Expanded(
@@ -587,6 +732,7 @@ class BookingHistoryList extends StatelessWidget {
     required this.screenWidth,
     required this.theme,
     required this.homeScreenStore,
+    required this.bookServiceStore,
   }) : super(key: key);
   //UI
   final double screenWidth;
@@ -594,6 +740,7 @@ class BookingHistoryList extends StatelessWidget {
 
   //Stores
   final HomeScreenStore homeScreenStore;
+  final BookServiceStore bookServiceStore;
 
   @override
   Widget build(BuildContext context) {
@@ -605,23 +752,46 @@ class BookingHistoryList extends StatelessWidget {
         ),
         const SizedBox(height: 15),
         Observer(builder: (_) {
-          return homeScreenStore.bookingHistoryList.isEmpty
-              ? Text(
-                  'No Record Found',
-                  style: theme.textTheme.headline4,
-                )
-              : ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: homeScreenStore.bookingHistoryList.length,
-                  itemBuilder: (context, index) => Column(
-                        children: [
-                          Row(
-                            key: ValueKey(
-                                homeScreenStore.bookingHistoryList[index]),
-                            children: [
-                              Expanded(
-                                child: customContainer(
+          return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: bookServiceStore.serviceRequestList.isEmpty
+                  ? 1
+                  : bookServiceStore.serviceRequestList.length,
+              itemBuilder: (context, index) {
+                if (bookServiceStore.serviceRequestList.isEmpty ||
+                    bookServiceStore.serviceRequestList
+                        .where((element) =>
+                            element.serviceRequestStatus !=
+                            ServiceRequestStatus.idle)
+                        .toList()
+                        .isEmpty) {
+                  return Column(
+                    children: const [
+                      SizedBox(height: 20),
+                      Text('No Record Found')
+                    ],
+                  );
+                } else {
+                  ServiceRequest currentItem =
+                      bookServiceStore.serviceRequestList[index];
+                  if (currentItem.serviceRequestStatus ==
+                      ServiceRequestStatus.idle) {
+                    return const SizedBox();
+                  } else {
+                    return Column(
+                      children: [
+                        Row(
+                          key: ValueKey(
+                              homeScreenStore.bookingHistoryList[index]),
+                          children: [
+                            Expanded(
+                              child: customContainer(
+                                child: Container(
+                                  color: currentItem.serviceRequestStatus ==
+                                          ServiceRequestStatus.canceled
+                                      ? theme.colorScheme.error
+                                      : theme.colorScheme.primary,
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
                                     mainAxisAlignment:
@@ -631,38 +801,184 @@ class BookingHistoryList extends StatelessWidget {
                                         children: [
                                           Text(
                                             DateFormat('d MMM y')
-                                                .format(DateTime.now())
+                                                .format(currentItem.dateTime)
                                                 .toString(),
-                                            // style: theme.textTheme.headline6,
+                                            style: theme.textTheme.headline6
+                                                ?.copyWith(
+                                              color: Colors.white,
+                                            ),
                                           ),
                                           const SizedBox(height: 2),
                                           Text(
                                             DateFormat('kk:mm a')
-                                                .format(DateTime.now())
+                                                .format(currentItem.dateTime)
                                                 .toString(),
                                             // style: theme.textTheme.headline6,
+                                            style: theme.textTheme.headline6
+                                                ?.copyWith(
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ],
                                       ),
                                       SizedBox(
                                         width: screenWidth * 0.4,
                                         child: Text(
-                                          'Shop Name',
-                                          style: theme.textTheme.headline6,
+                                          currentItem.vehicleService.shopName,
+                                          style: theme.textTheme.headline6
+                                              ?.copyWith(
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
-                                      const Text('PKR : 1590'),
+                                      Column(
+                                        children: [
+                                          Text(
+                                            'PKR : ${currentItem.vehicleService.cost}',
+                                            style: theme.textTheme.headline6
+                                                ?.copyWith(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Text(
+                                            ' ${currentItem.serviceRequestStatus.getName()}',
+                                            style: theme.textTheme.headline6
+                                                ?.copyWith(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                        ],
-                      ));
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    );
+                  }
+                }
+              });
         }),
       ],
     );
   }
+}
+
+class VehicleList extends StatelessWidget {
+  const VehicleList({
+    Key? key,
+    required ManageVehicleStore manageVehicleStore,
+    required this.theme,
+  })  : _manageVehicleStore = manageVehicleStore,
+        super(key: key);
+
+  final ManageVehicleStore _manageVehicleStore;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: _manageVehicleStore.userVehicleList.isEmpty
+          ? 1
+          : _manageVehicleStore.userVehicleList.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (BuildContext context, int index) {
+        if (_manageVehicleStore.userVehicleList.isEmpty) {
+          return Center(
+            child: Text(
+              'No Vehicles Added yet',
+              style: theme.textTheme.headline4,
+            ),
+          );
+        } else {
+          Vehicle currentItem = _manageVehicleStore.userVehicleList[index];
+
+          return SingleVehicleWidget(
+            currentItem: currentItem,
+            theme: theme,
+          );
+        }
+      },
+    );
+  }
+}
+
+class SingleVehicleWidget extends StatelessWidget {
+  SingleVehicleWidget({
+    Key? key,
+    required this.currentItem,
+    required this.theme,
+  }) : super(key: key);
+
+  final Vehicle currentItem;
+  final ThemeData theme;
+  final AvailableShopStore _availableShopStore = getIt<AvailableShopStore>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: ValueKey(currentItem.id),
+      direction: DismissDirection.endToStart,
+      onDismissed: (DismissDirection dismissDirection) {},
+      child: customContainer(
+        child: InkWell(
+          onTap: () {
+            _availableShopStore.updateSelectedVehicle(currentItem);
+            Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
+          },
+          child: ListTile(
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(150),
+              child: buildImage(theme, currentItem.vehicleImages.first,
+                  height: 50, width: 50),
+            ),
+            title: Text(currentItem.vehicleModel),
+            subtitle: Text(currentItem.vehicleCompany),
+            trailing: Text(currentItem.vehicleType.getName()),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Future<void> findService(
+    BuildContext context,
+    ThemeData theme,
+    ServiceType serviceType,
+    ManageVehicleStore manageVehicleStore,
+    AvailableShopStore availableShopStore) async {
+  availableShopStore.updateSelectedServiceType(serviceType);
+  //pop services sheet
+  Navigator.of(context).pop();
+  await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                Text(
+                  'Select a vehicle',
+                  style: theme.textTheme.headline3,
+                ),
+                const SizedBox(height: 20),
+                VehicleList(
+                    theme: theme, manageVehicleStore: manageVehicleStore),
+              ],
+            ),
+          ),
+        );
+      });
+  //pop vehicles sheet
+  Navigator.of(context).pop();
+
+  Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
 }
