@@ -1,6 +1,11 @@
 import 'package:intl/intl.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+import '../../constants/firebase_constants.dart';
+import '../../custom_utils/connectivity_helper.dart';
+import '../../custom_utils/custom_alerts.dart';
+import '../../custom_utils/function_response.dart';
+import '../../custom_utils/google_maps_helper.dart';
 import '../../custom_widgets/custom_wrappers.dart';
 import 'package:flutter/material.dart';
 //Theme
@@ -25,19 +30,67 @@ import '../manage_vehicle/user_vehicle_list_screen.dart';
 import '../profile/widget/display_image_widget.dart';
 import 'bookings_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
   static const routeName = '/home-screen';
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   //Theme
   final AppColors _appColor = getIt<AppColors>();
 
   //Stores
   final HomeScreenStore _homeScreenStore = getIt<HomeScreenStore>();
+
   final UserProfileScreenStore _userProfileScreenStore =
       getIt<UserProfileScreenStore>();
+
   final ManageVehicleStore _manageVehicleStore = getIt<ManageVehicleStore>();
+
   final BookServiceStore _bookServiceStore = getIt<BookServiceStore>();
+
+  //Utilities
+  final GoogleMapsHelper _googleMapsHelper = getIt<GoogleMapsHelper>();
+
+  final CustomAlerts _customAlerts = getIt<CustomAlerts>();
+
+  final ConnectivityHelper _connectivityHelper = getIt<ConnectivityHelper>();
+
+  //Functions
+  Future<void> tryLogout(BuildContext context) async {
+    FunctionResponse fResponse = getIt<FunctionResponse>();
+
+    try {
+      _customAlerts.showLoaderDialog(context);
+      fResponse = await _connectivityHelper.checkInternetConnection();
+      if (fResponse.success) {
+        await firebaseAuth.signOut();
+        fResponse.passed(message: 'Sign Out Successful');
+      }
+    } catch (e) {
+      fResponse.failed(message: 'Error Logging Out');
+    }
+
+    _customAlerts.popLoader(context);
+
+    fResponse.printResponse();
+    //show snackbar
+    _customAlerts.showSnackBar(context, fResponse.message,
+        success: fResponse.success);
+    if (fResponse.success) {
+      //Go to Login
+      Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+    }
+  }
+
+  @override
+  void initState() {
+    _homeScreenStore.loadAllData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,65 +100,72 @@ class HomeScreen extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          actions: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      // Navigator.of(context).pushNamed(ChatScreen.routeName);
-                    },
-                    icon: const Icon(Icons.notifications)),
-                IconButton(
-                    onPressed: () {
-                      Navigator.of(context)
-                          .pushReplacementNamed(LoginScreen.routeName);
-                    },
-                    icon: const Icon(Icons.logout)),
-              ],
-            ),
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Column(
-              children: [
-                ProfileWidget(
-                    theme: theme,
-                    userProfileScreenStore: _userProfileScreenStore),
-                const SizedBox(height: 20),
-                BookingStats(
-                    theme: theme,
-                    homeScreenStore: _homeScreenStore,
-                    manageVehicleStore: _manageVehicleStore,
-                    bookServiceStore: _bookServiceStore),
-                const SizedBox(height: 20),
-                ServiceTabs(screenWidth: screenWidth, theme: theme),
-                const SizedBox(height: 20),
-                BookingHistoryList(
-                    screenWidth: screenWidth,
-                    theme: theme,
-                    homeScreenStore: _homeScreenStore),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () =>
-              Navigator.of(context).pushNamed(AddNewVehicleScreen.routeName),
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: theme.colorScheme.secondary,
-          label: const Text('Add Vehicle'),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
-        // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      ),
+      child: Observer(builder: (_) {
+        return _homeScreenStore.isLoadingHomeScreenData
+            ? const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+              )
+            : Scaffold(
+                appBar: AppBar(
+                  actions: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              // Navigator.of(context).pushNamed(ChatScreen.routeName);
+                            },
+                            icon: const Icon(Icons.notifications)),
+                        IconButton(
+                            onPressed: () async {
+                              await tryLogout(context);
+                            },
+                            icon: const Icon(Icons.logout)),
+                      ],
+                    ),
+                  ],
+                ),
+                body: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Column(
+                      children: [
+                        ProfileWidget(
+                            theme: theme,
+                            userProfileScreenStore: _userProfileScreenStore),
+                        const SizedBox(height: 20),
+                        BookingStats(
+                            theme: theme,
+                            homeScreenStore: _homeScreenStore,
+                            manageVehicleStore: _manageVehicleStore,
+                            bookServiceStore: _bookServiceStore),
+                        const SizedBox(height: 20),
+                        ServiceTabs(screenWidth: screenWidth, theme: theme),
+                        const SizedBox(height: 20),
+                        BookingHistoryList(
+                            screenWidth: screenWidth,
+                            theme: theme,
+                            homeScreenStore: _homeScreenStore),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+                floatingActionButton: FloatingActionButton.extended(
+                  onPressed: () => Navigator.of(context)
+                      .pushNamed(AddNewVehicleScreen.routeName),
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.secondary,
+                  label: const Text('Add Vehicle'),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+              );
+      }),
     );
   }
 }
@@ -494,7 +554,7 @@ class ProfileWidget extends StatelessWidget {
               radius: 50,
               // child: Image.asset(appLogo),
               child: DisplayImage(
-                imagePath: userProfileScreenStore.user.userImage,
+                imagePath: userProfileScreenStore.currentUser.userImage,
                 onPressed: () {},
               ),
             )),
@@ -505,11 +565,11 @@ class ProfileWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'Hammad',
+                      '${userProfileScreenStore.currentUser.firstName} ${userProfileScreenStore.currentUser.lastName}',
                       style: theme.textTheme.headline3,
                     ),
                     Text(
-                      '+923012345678',
+                      userProfileScreenStore.currentUser.email,
                       style: theme.textTheme.headline5,
                     ),
                   ],

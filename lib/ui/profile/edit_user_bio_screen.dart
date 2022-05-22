@@ -106,7 +106,8 @@ class EditUserBioScreen extends StatelessWidget {
                               }
                               formData['bio'] = val;
                             },
-                            initialValue: _userProfileScreenStore.user.userBio,
+                            initialValue:
+                                _userProfileScreenStore.currentUser.userBio,
                             keyboardType: TextInputType.text,
                             decoration: const InputDecoration(
                               labelText: 'Your Bio',

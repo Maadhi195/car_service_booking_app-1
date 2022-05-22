@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:mobx/mobx.dart';
 //Models
-import '../models/user.dart';
+import '../constants/firebase_constants.dart';
+import '../custom_utils/google_maps_helper.dart';
+import '../models/app_user.dart';
 //Custom Utilities
 import '../../custom_utils/general_helper.dart';
 import '../../custom_utils/function_response.dart';
@@ -14,19 +17,30 @@ class UserProfileScreenStore = _UserProfileScreenStore
 
 abstract class _UserProfileScreenStore with Store {
   @observable
-  User user = User(
-    id: '1',
-    firstName: 'Hammad',
-    lastName: 'Khalid',
-    email: 'hammad123@gmail.com',
-    password: '12345678',
-    userImage:
-        'https://image.shutterstock.com/image-vector/businessman-profile-icon-male-portrait-600w-231829399.jpg',
-    address: 'Burewala, Punjab, Pakistan',
-    userBio:
-        'Lorem Ipsum Dolor Set Amet Delet Lorem Ipsum Dolor Set Amet Delet Lorem Ipsum Dolor Set Amet Delet Lorem Ipsum Dolor Set Amet Delet',
-    userLatLng: const LatLng(30.5116, 74.3333),
-    // userLatLng: '',
+  // AppUser currentUser = AppUser(
+  //   id: '1',
+  //   firstName: 'Hammad',
+  //   lastName: 'Khalid',
+  //   email: 'hammad123@gmail.com',
+  //   password: '12345678',
+  //   userImage:
+  //       'https://image.shutterstock.com/image-vector/businessman-profile-icon-male-portrait-600w-231829399.jpg',
+  //   address: 'Burewala, Punjab, Pakistan',
+  //   userBio:
+  //       'Lorem Ipsum Dolor Set Amet Delet Lorem Ipsum Dolor Set Amet Delet Lorem Ipsum Dolor Set Amet Delet Lorem Ipsum Dolor Set Amet Delet',
+  //   userLatLng: const LatLng(30.5116, 74.3333),
+  //   // userLatLng: '',
+  // );
+  AppUser currentUser = AppUser(
+    id: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    address: '',
+    userImage: '',
+    userBio: '',
+    userLatLng: GoogleMapsHelper().defaultGoogleMapsLocation,
   );
 
   Future<FunctionResponse> updateUserName(
@@ -35,16 +49,16 @@ abstract class _UserProfileScreenStore with Store {
     await delayFunction();
     try {
       print('before update');
-      user = User(
-        id: user.id,
+      currentUser = AppUser(
+        id: currentUser.id,
         firstName: firstName,
         lastName: lastName,
-        email: user.email,
-        password: user.password,
-        userImage: user.userImage,
-        address: user.address,
-        userBio: user.userBio,
-        userLatLng: user.userLatLng,
+        email: currentUser.email,
+        password: currentUser.password,
+        userImage: currentUser.userImage,
+        address: currentUser.address,
+        userBio: currentUser.userBio,
+        userLatLng: currentUser.userLatLng,
       );
 
       fResponse.passed(message: 'Name Updated');
@@ -62,16 +76,16 @@ abstract class _UserProfileScreenStore with Store {
     await delayFunction();
     try {
       print('before update');
-      user = User(
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        password: user.password,
-        userImage: user.userImage,
+      currentUser = AppUser(
+        id: currentUser.id,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        email: currentUser.email,
+        password: currentUser.password,
+        userImage: currentUser.userImage,
         address: address,
-        userBio: user.userBio,
-        userLatLng: user.userLatLng,
+        userBio: currentUser.userBio,
+        userLatLng: currentUser.userLatLng,
       );
 
       fResponse.passed(message: 'Address Updated');
@@ -89,16 +103,16 @@ abstract class _UserProfileScreenStore with Store {
     await delayFunction();
     try {
       print('before update');
-      user = User(
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        password: user.password,
-        userImage: user.userImage,
-        address: user.address,
+      currentUser = AppUser(
+        id: currentUser.id,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        email: currentUser.email,
+        password: currentUser.password,
+        userImage: currentUser.userImage,
+        address: currentUser.address,
         userBio: userBio,
-        userLatLng: user.userLatLng,
+        userLatLng: currentUser.userLatLng,
       );
 
       fResponse.passed(message: 'User Bio Updated');
@@ -116,16 +130,16 @@ abstract class _UserProfileScreenStore with Store {
     await delayFunction();
     try {
       print('before update');
-      user = User(
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        password: user.password,
+      currentUser = AppUser(
+        id: currentUser.id,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        email: currentUser.email,
+        password: currentUser.password,
         userImage: userImage,
-        address: user.address,
-        userBio: user.userBio,
-        userLatLng: user.userLatLng,
+        address: currentUser.address,
+        userBio: currentUser.userBio,
+        userLatLng: currentUser.userLatLng,
       );
 
       fResponse.passed(message: 'User Image Updated');
@@ -138,27 +152,22 @@ abstract class _UserProfileScreenStore with Store {
     return fResponse;
   }
 
-  Future<FunctionResponse> updateUserLatLng(PickResult newLocation) async {
+  Future<FunctionResponse> updateUserLatLng(LatLng newLocation) async {
     FunctionResponse fResponse = getIt<FunctionResponse>();
     await delayFunction();
 
     try {
-      print('${newLocation.formattedAddress}');
-      print('${newLocation.geometry?.location.lat}');
-      print('${newLocation.geometry?.location.lng}');
-
       print('before update');
-      user = User(
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        password: user.password,
-        userImage: user.userImage,
-        address: user.address,
-        userBio: user.userBio,
-        userLatLng: LatLng(newLocation.geometry!.location.lat,
-            newLocation.geometry!.location.lng),
+      currentUser = AppUser(
+        id: currentUser.id,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        email: currentUser.email,
+        password: currentUser.password,
+        userImage: currentUser.userImage,
+        address: currentUser.address,
+        userBio: currentUser.userBio,
+        userLatLng: newLocation,
       );
 
       fResponse.passed(message: 'User LatLng Updated');
@@ -168,6 +177,50 @@ abstract class _UserProfileScreenStore with Store {
       fResponse.failed(message: 'Unable to update address : $e');
     }
     // fResponse.printResponse();
+    return fResponse;
+  }
+
+  @action
+  Future<FunctionResponse> loadProfile() async {
+    FunctionResponse fResponse = getIt<FunctionResponse>();
+    try {
+      var data;
+      final User? user = firebaseAuth.currentUser;
+      if (user != null) {
+        DocumentSnapshot doc =
+            await firestoreUsersCollection.doc(user.uid).get();
+        if (doc.exists) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+          print(' Data from FireBase ${data.toString()}');
+          LatLng newUserLatLng = GoogleMapsHelper().defaultGoogleMapsLocation;
+          if (data['userLatLng'] == null) {
+            final GeoPoint? dbLocation = data['userLatLng'] as GeoPoint;
+            if (dbLocation != null) {
+              newUserLatLng = LatLng(dbLocation.latitude, dbLocation.longitude);
+            }
+          }
+          print('after getting location');
+          currentUser = AppUser(
+            id: user.uid,
+            firstName: data['firstName'],
+            lastName: data['lastName'],
+            email: data['email'],
+            password: data['password'],
+            address: data['address'],
+            userImage: data['userImage'],
+            userBio: data['userBio'],
+            userLatLng: newUserLatLng,
+          );
+          fResponse.passed(message: 'Profile Loaded from database');
+        }
+      } else {
+        fResponse.failed(message: 'Current user not found');
+      }
+    } catch (e) {
+      fResponse.failed(message: 'Error loading profile : $e');
+    }
+
     return fResponse;
   }
 }

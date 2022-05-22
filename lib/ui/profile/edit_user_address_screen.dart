@@ -104,7 +104,8 @@ class EditUserAddressScreen extends StatelessWidget {
                               }
                               formData['address'] = val;
                             },
-                            initialValue: _userProfileScreenStore.user.address,
+                            initialValue:
+                                _userProfileScreenStore.currentUser.address,
                             keyboardType: TextInputType.text,
                             decoration: const InputDecoration(
                               labelText: 'Your Address',

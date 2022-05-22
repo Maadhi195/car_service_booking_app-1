@@ -6,25 +6,26 @@ part of 'auth_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$AuthStore on _AuthStore, Store {
-  final _$newUserAtom = Atom(name: '_AuthStore.newUser');
+  late final _$newUserAtom = Atom(name: '_AuthStore.newUser', context: context);
 
   @override
-  User get newUser {
+  AppUser get newUser {
     _$newUserAtom.reportRead();
     return super.newUser;
   }
 
   @override
-  set newUser(User value) {
+  set newUser(AppUser value) {
     _$newUserAtom.reportWrite(value, super.newUser, () {
       super.newUser = value;
     });
   }
 
-  final _$currentUserAtom = Atom(name: '_AuthStore.currentUser');
+  late final _$currentUserAtom =
+      Atom(name: '_AuthStore.currentUser', context: context);
 
   @override
   ServiceShop? get currentUser {
@@ -39,7 +40,8 @@ mixin _$AuthStore on _AuthStore, Store {
     });
   }
 
-  final _$serviceShopeListAtom = Atom(name: '_AuthStore.serviceShopeList');
+  late final _$serviceShopeListAtom =
+      Atom(name: '_AuthStore.serviceShopeList', context: context);
 
   @override
   ObservableList<ServiceShop> get serviceShopeList {
@@ -54,14 +56,26 @@ mixin _$AuthStore on _AuthStore, Store {
     });
   }
 
-  final _$_AuthStoreActionController = ActionController(name: '_AuthStore');
+  late final _$_AuthStoreActionController =
+      ActionController(name: '_AuthStore', context: context);
 
   @override
-  void updateCoverImage(String image) {
+  void updateUserImage(String image) {
     final _$actionInfo = _$_AuthStoreActionController.startAction(
-        name: '_AuthStore.updateCoverImage');
+        name: '_AuthStore.updateUserImage');
     try {
-      return super.updateCoverImage(image);
+      return super.updateUserImage(image);
+    } finally {
+      _$_AuthStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateUserLocation(LatLng newLocation) {
+    final _$actionInfo = _$_AuthStoreActionController.startAction(
+        name: '_AuthStore.updateUserLocation');
+    try {
+      return super.updateUserLocation(newLocation);
     } finally {
       _$_AuthStoreActionController.endAction(_$actionInfo);
     }

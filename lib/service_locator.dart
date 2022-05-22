@@ -41,9 +41,13 @@ Future<void> setupLocator() async {
   // );
 
   //Stores
-  getIt.registerSingleton(AuthStore());
-  getIt.registerSingleton(HomeScreenStore());
+  getIt.registerSingleton(AuthStore(
+    getIt<CustomImageHelper>(),
+  ));
   getIt.registerSingleton(UserProfileScreenStore());
+  getIt.registerSingleton(HomeScreenStore(
+    getIt<UserProfileScreenStore>(),
+  ));
   getIt.registerSingleton(ManageVehicleStore());
   getIt.registerSingleton(AvailableShopeStore());
   getIt.registerSingleton(BookServiceStore());

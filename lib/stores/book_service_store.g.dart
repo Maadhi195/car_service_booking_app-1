@@ -6,10 +6,11 @@ part of 'book_service_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$BookServiceStore on _BookServiceStore, Store {
-  final _$bookingTimeAtom = Atom(name: '_BookServiceStore.bookingTime');
+  late final _$bookingTimeAtom =
+      Atom(name: '_BookServiceStore.bookingTime', context: context);
 
   @override
   DateTime get bookingTime {
@@ -24,7 +25,8 @@ mixin _$BookServiceStore on _BookServiceStore, Store {
     });
   }
 
-  final _$vehicleServiceAtom = Atom(name: '_BookServiceStore.vehicleService');
+  late final _$vehicleServiceAtom =
+      Atom(name: '_BookServiceStore.vehicleService', context: context);
 
   @override
   VehicleService? get vehicleService {
@@ -39,8 +41,8 @@ mixin _$BookServiceStore on _BookServiceStore, Store {
     });
   }
 
-  final _$serviceRequestListAtom =
-      Atom(name: '_BookServiceStore.serviceRequestList');
+  late final _$serviceRequestListAtom =
+      Atom(name: '_BookServiceStore.serviceRequestList', context: context);
 
   @override
   ObservableList<ServiceRequest> get serviceRequestList {
@@ -55,8 +57,8 @@ mixin _$BookServiceStore on _BookServiceStore, Store {
     });
   }
 
-  final _$createBookingRequestAsyncAction =
-      AsyncAction('_BookServiceStore.createBookingRequest');
+  late final _$createBookingRequestAsyncAction =
+      AsyncAction('_BookServiceStore.createBookingRequest', context: context);
 
   @override
   Future<FunctionResponse> createBookingRequest(
@@ -65,8 +67,8 @@ mixin _$BookServiceStore on _BookServiceStore, Store {
         .run(() => super.createBookingRequest(date, vehicleService));
   }
 
-  final _$_BookServiceStoreActionController =
-      ActionController(name: '_BookServiceStore');
+  late final _$_BookServiceStoreActionController =
+      ActionController(name: '_BookServiceStore', context: context);
 
   @override
   void setBookingTime(DateTime newDateTime) {

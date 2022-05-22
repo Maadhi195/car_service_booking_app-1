@@ -1,2 +1,0 @@
-
-// LatLng customLocation = Lat 

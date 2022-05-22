@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 
 import '../../custom_utils/custom_alerts.dart';
 import '../../custom_utils/google_maps_helper.dart';
@@ -51,10 +50,10 @@ class UserProfileScreen extends StatelessWidget {
     try {
       // _customAlerts.showLoaderDialog(context);
 
-      fResponse = _googleMapsHelper.showPlacePicker(context);
+      // fResponse = _googleMapsHelper.showPlacePicker(context);
 
       if (fResponse.success) {
-        final PickResult pickResult = fResponse.data;
+        // final PickResult pickResult = fResponse.data;
         fResponse =
             await _userProfileScreenStore.updateUserLatLng(fResponse.data);
       }
@@ -97,7 +96,7 @@ class UserProfileScreen extends StatelessWidget {
                     await changeUserImage(context);
                   },
                   child: DisplayImage(
-                    imagePath: _userProfileScreenStore.user.userImage,
+                    imagePath: _userProfileScreenStore.currentUser.userImage,
                     onPressed: () {},
                   ));
             }),
@@ -106,7 +105,7 @@ class UserProfileScreen extends StatelessWidget {
               return buildUserInfoDisplay(
                 context,
                 theme,
-                '${_userProfileScreenStore.user.firstName} ${_userProfileScreenStore.user.lastName}',
+                '${_userProfileScreenStore.currentUser.firstName} ${_userProfileScreenStore.currentUser.lastName}',
                 'Name',
                 EditUserNameScreen.routeName,
               );
@@ -115,7 +114,7 @@ class UserProfileScreen extends StatelessWidget {
               return buildUserInfoDisplay(
                   context,
                   theme,
-                  _userProfileScreenStore.user.address,
+                  _userProfileScreenStore.currentUser.address,
                   'Address',
                   EditUserAddressScreen.routeName);
             }),
@@ -123,7 +122,7 @@ class UserProfileScreen extends StatelessWidget {
               return buildUserInfoDisplay(
                   context,
                   theme,
-                  _userProfileScreenStore.user.userBio,
+                  _userProfileScreenStore.currentUser.userBio,
                   'User Bio',
                   EditUserBioScreen.routeName);
             }),
@@ -131,7 +130,7 @@ class UserProfileScreen extends StatelessWidget {
               return buildUserInfoDisplay(
                 context,
                 theme,
-                _userProfileScreenStore.user.userLatLng.toString(),
+                _userProfileScreenStore.currentUser.userLatLng.toString(),
                 'User Location',
                 EditUserBioScreen.routeName,
                 onPressed: () {

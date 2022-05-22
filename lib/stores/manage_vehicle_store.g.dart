@@ -6,11 +6,11 @@ part of 'manage_vehicle_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ManageVehicleStore on _ManageVehicleStore, Store {
-  final _$selectedVehicleTypeAtom =
-      Atom(name: '_ManageVehicleStore.selectedVehicleType');
+  late final _$selectedVehicleTypeAtom =
+      Atom(name: '_ManageVehicleStore.selectedVehicleType', context: context);
 
   @override
   String get selectedVehicleType {
@@ -25,8 +25,8 @@ mixin _$ManageVehicleStore on _ManageVehicleStore, Store {
     });
   }
 
-  final _$vehicleImageListAtom =
-      Atom(name: '_ManageVehicleStore.vehicleImageList');
+  late final _$vehicleImageListAtom =
+      Atom(name: '_ManageVehicleStore.vehicleImageList', context: context);
 
   @override
   ObservableList<String> get vehicleImageList {
@@ -41,8 +41,8 @@ mixin _$ManageVehicleStore on _ManageVehicleStore, Store {
     });
   }
 
-  final _$userVehicleListAtom =
-      Atom(name: '_ManageVehicleStore.userVehicleList');
+  late final _$userVehicleListAtom =
+      Atom(name: '_ManageVehicleStore.userVehicleList', context: context);
 
   @override
   ObservableList<Vehicle> get userVehicleList {
@@ -57,8 +57,8 @@ mixin _$ManageVehicleStore on _ManageVehicleStore, Store {
     });
   }
 
-  final _$addNewVehicleToListAsyncAction =
-      AsyncAction('_ManageVehicleStore.addNewVehicleToList');
+  late final _$addNewVehicleToListAsyncAction =
+      AsyncAction('_ManageVehicleStore.addNewVehicleToList', context: context);
 
   @override
   Future<FunctionResponse> addNewVehicleToList(Vehicle newVehicle) {
@@ -66,8 +66,8 @@ mixin _$ManageVehicleStore on _ManageVehicleStore, Store {
         .run(() => super.addNewVehicleToList(newVehicle));
   }
 
-  final _$_ManageVehicleStoreActionController =
-      ActionController(name: '_ManageVehicleStore');
+  late final _$_ManageVehicleStoreActionController =
+      ActionController(name: '_ManageVehicleStore', context: context);
 
   @override
   void changeSelectedVehicleType(String newVehicleType) {

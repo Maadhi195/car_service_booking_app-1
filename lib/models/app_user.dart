@@ -1,6 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class User {
+class AppUser {
   String id;
   String firstName;
   String lastName;
@@ -10,7 +10,7 @@ class User {
   String address;
   String userBio;
   LatLng userLatLng;
-  User({
+  AppUser({
     required this.id,
     required this.firstName,
     required this.lastName,

@@ -103,7 +103,7 @@ class EditUserNameScreen extends StatelessWidget {
                               // Handles Form Validation for First Name
                               validator: _customValidator.validateName,
                               initialValue:
-                                  _userProfileScreenStore.user.firstName,
+                                  _userProfileScreenStore.currentUser.firstName,
                               decoration: const InputDecoration(
                                   labelText: 'First Name'),
                               onSaved: (String? val) {
@@ -122,7 +122,7 @@ class EditUserNameScreen extends StatelessWidget {
                               // Handles Form Validation for Last Name
                               validator: _customValidator.validateName,
                               initialValue:
-                                  _userProfileScreenStore.user.lastName,
+                                  _userProfileScreenStore.currentUser.lastName,
                               decoration:
                                   const InputDecoration(labelText: 'Last Name'),
                               onSaved: (String? val) {
