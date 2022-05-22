@@ -6,6 +6,14 @@ A new Flutter project.
 
 This project is a starting point for a Flutter application.
 
+## How to run
+Run following commands after cloning this repository:
+```sh
+$ flutter clean
+$ flutter pub get
+$ flutter packages pub run build_runner watch --delete-conflicting-outputs
+```
+
 A few resources to get you started if this is your first Flutter project:
 
 - [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
