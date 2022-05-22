@@ -188,6 +188,10 @@ class SignupScreen extends StatelessWidget {
                                               radius: 50,
                                               // clipBehavior: Clip.hardEdge,
                                               // borderRadius: BorderRadius.circular(100),
+                                              backgroundColor: _authStore
+                                                      .newUser.userImage.isEmpty
+                                                  ? null
+                                                  : Colors.transparent,
                                               child: _authStore
                                                       .newUser.userImage.isEmpty
                                                   ? const Center(
@@ -201,9 +205,12 @@ class SignupScreen extends StatelessWidget {
                                                           BorderRadius.circular(
                                                               100),
                                                       child: buildImage(
-                                                          theme,
-                                                          _authStore.newUser
-                                                              .userImage),
+                                                        theme,
+                                                        _authStore
+                                                            .newUser.userImage,
+                                                        height: 100,
+                                                        width: 100,
+                                                      ),
                                                     ),
                                             ),
                                           );

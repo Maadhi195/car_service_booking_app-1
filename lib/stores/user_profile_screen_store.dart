@@ -183,15 +183,18 @@ abstract class _UserProfileScreenStore with Store {
   @action
   Future<FunctionResponse> loadProfile() async {
     FunctionResponse fResponse = getIt<FunctionResponse>();
+    print('inside load profile');
+
     try {
-      var data;
       final User? user = firebaseAuth.currentUser;
       if (user != null) {
+        print('before query');
         DocumentSnapshot doc =
             await firestoreUsersCollection.doc(user.uid).get();
         if (doc.exists) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
+          print('before data parse');
           print(' Data from FireBase ${data.toString()}');
           LatLng newUserLatLng = GoogleMapsHelper().defaultGoogleMapsLocation;
           if (data['userLatLng'] == null) {
@@ -213,6 +216,8 @@ abstract class _UserProfileScreenStore with Store {
             userLatLng: newUserLatLng,
           );
           fResponse.passed(message: 'Profile Loaded from database');
+        } else {
+          fResponse.failed(message: 'data not found');
         }
       } else {
         fResponse.failed(message: 'Current user not found');

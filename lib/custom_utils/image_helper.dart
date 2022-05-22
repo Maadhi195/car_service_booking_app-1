@@ -30,6 +30,7 @@ class CustomImageHelper {
       _fResponse.message = 'Found image type';
     } catch (e) {
       _fResponse.failed();
+      _fResponse.data = ImageType.network;
       _fResponse.message = 'Error finding image type';
     }
 

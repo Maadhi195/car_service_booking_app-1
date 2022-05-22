@@ -93,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    print('load data');
     _homeScreenStore.loadAllData();
     super.initState();
   }
@@ -132,48 +133,43 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                body: RefreshIndicator(
-                  onRefresh: () async {
-                    await _bookServiceStore.loadAllServiceRequests();
-                  },
-                  child: Stack(
-                    children: [
-                      SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: Column(
-                            children: [
-                              ProfileWidget(
-                                  theme: theme,
-                                  userProfileScreenStore:
-                                      _userProfileScreenStore),
-                              const SizedBox(height: 20),
-                              BookingStats(
-                                  theme: theme,
-                                  homeScreenStore: _homeScreenStore,
-                                  manageVehicleStore: _manageVehicleStore,
-                                  bookServiceStore: _bookServiceStore),
-                              const SizedBox(height: 20),
-                              ServiceTabs(
-                                screenWidth: screenWidth,
+                body: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Column(
+                          children: [
+                            ProfileWidget(
                                 theme: theme,
-                                manageVehicleStore: _manageVehicleStore,
-                                availableShopStore: _availableShopStore,
-                              ),
-                              const SizedBox(height: 20),
-                              BookingHistoryList(
-                                screenWidth: screenWidth,
+                                userProfileScreenStore:
+                                    _userProfileScreenStore),
+                            const SizedBox(height: 20),
+                            BookingStats(
                                 theme: theme,
                                 homeScreenStore: _homeScreenStore,
-                                bookServiceStore: _bookServiceStore,
-                              ),
-                              const SizedBox(height: 20),
-                            ],
-                          ),
+                                manageVehicleStore: _manageVehicleStore,
+                                bookServiceStore: _bookServiceStore),
+                            const SizedBox(height: 20),
+                            ServiceTabs(
+                              screenWidth: screenWidth,
+                              theme: theme,
+                              manageVehicleStore: _manageVehicleStore,
+                              availableShopStore: _availableShopStore,
+                            ),
+                            const SizedBox(height: 20),
+                            BookingHistoryList(
+                              screenWidth: screenWidth,
+                              theme: theme,
+                              homeScreenStore: _homeScreenStore,
+                              bookServiceStore: _bookServiceStore,
+                            ),
+                            const SizedBox(height: 20),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 floatingActionButton: FloatingActionButton.extended(
                   onPressed: () => Navigator.of(context)
@@ -977,8 +973,6 @@ Future<void> findService(
           ),
         );
       });
-  //pop vehicles sheet
-  Navigator.of(context).pop();
 
   Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
 }
