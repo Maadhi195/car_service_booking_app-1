@@ -771,8 +771,10 @@ class BookingHistoryList extends StatelessWidget {
                 } else {
                   ServiceRequest currentItem =
                       bookServiceStore.serviceRequestList[index];
-                  if (currentItem.serviceRequestStatus ==
-                      ServiceRequestStatus.idle) {
+                  if (currentItem.serviceRequestStatus !=
+                          ServiceRequestStatus.done &&
+                      currentItem.serviceRequestStatus !=
+                          ServiceRequestStatus.canceled) {
                     return const SizedBox();
                   } else {
                     return Column(

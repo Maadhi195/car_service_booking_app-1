@@ -24,14 +24,16 @@ class BookingDetailsScreen extends StatelessWidget {
 
   //Functions
   Future<void> updateRequestStatus(
-      BuildContext context, String serviceRequestId) async {
+      BuildContext context,
+      String serviceRequestId,
+      ServiceRequestStatus serviceRequestStatus) async {
     FunctionResponse fResponse = getIt<FunctionResponse>();
 
     _customAlerts.showLoaderDialog(context);
     fResponse = await _connectivityHelper.checkInternetConnection();
     if (fResponse.success) {
       fResponse = await _bookServiceStore.updateRequsetStatus(
-          serviceRequestId, ServiceRequestStatus.canceled);
+          serviceRequestId, serviceRequestStatus);
       _bookServiceStore.loadAllServiceRequests();
     }
     _customAlerts.popLoader(context);
@@ -91,18 +93,37 @@ class BookingDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await updateRequestStatus(context, serviceRequest.id);
-                        },
-                        child: const Text('Cancel Service'),
-                      ),
-                    ),
-                  ],
-                )
+                (serviceRequest.serviceRequestStatus ==
+                            ServiceRequestStatus.idle ||
+                        serviceRequest.serviceRequestStatus ==
+                            ServiceRequestStatus.completed)
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                ServiceRequestStatus? nextStatus;
+
+                                if (serviceRequest.serviceRequestStatus ==
+                                    ServiceRequestStatus.idle) {
+                                  nextStatus = ServiceRequestStatus.canceled;
+                                } else if (serviceRequest
+                                        .serviceRequestStatus ==
+                                    ServiceRequestStatus.completed) {
+                                  nextStatus = ServiceRequestStatus.done;
+                                }
+
+                                assert(nextStatus != null);
+                                await updateRequestStatus(
+                                    context, serviceRequest.id, nextStatus!);
+                              },
+                              child: Text(serviceRequest.serviceRequestStatus
+                                  .getButtonTextName()),
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox(),
               ],
             ),
           ),

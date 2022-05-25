@@ -33,7 +33,7 @@ void main() async {
   await Firebase.initializeApp();
 
   await setupLocator();
-  _setupLogging();
+  // _setupLogging();
   // debugPaintSizeEnabled = true;
   runApp(const MyApp());
 }

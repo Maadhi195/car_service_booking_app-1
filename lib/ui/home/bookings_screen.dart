@@ -31,15 +31,44 @@ class BookingsScreen extends StatelessWidget {
               padding: const EdgeInsets.all(18.0),
               itemCount: _bookServiceStore.serviceRequestList.isEmpty
                   ? 1
-                  : _bookServiceStore.serviceRequestList.length,
+                  : _bookServiceStore.serviceRequestList
+                      .where((element) =>
+                          element.serviceRequestStatus !=
+                              ServiceRequestStatus.canceled ||
+                          element.serviceRequestStatus !=
+                              ServiceRequestStatus.done)
+                      .toList()
+                      .length,
               itemBuilder: (BuildContext context, int index) {
-                if (_bookServiceStore.serviceRequestList.isEmpty ||
-                    _bookServiceStore.serviceRequestList
-                        .where((element) =>
-                            element.serviceRequestStatus ==
-                            ServiceRequestStatus.idle)
-                        .toList()
-                        .isEmpty) {
+                bool isNotIdle = _bookServiceStore.serviceRequestList
+                    .where((element) =>
+                        element.serviceRequestStatus ==
+                        ServiceRequestStatus.idle)
+                    .toList()
+                    .isEmpty;
+                bool isNotAccepted = _bookServiceStore.serviceRequestList
+                    .where((element) =>
+                        element.serviceRequestStatus ==
+                        ServiceRequestStatus.accepted)
+                    .toList()
+                    .isEmpty;
+                bool isNotInProgress = _bookServiceStore.serviceRequestList
+                    .where((element) =>
+                        element.serviceRequestStatus ==
+                        ServiceRequestStatus.inprogress)
+                    .toList()
+                    .isEmpty;
+                bool isNotCompleted = _bookServiceStore.serviceRequestList
+                    .where((element) =>
+                        element.serviceRequestStatus ==
+                        ServiceRequestStatus.inprogress)
+                    .toList()
+                    .isEmpty;
+
+                if (isNotIdle &&
+                    isNotAccepted &&
+                    isNotInProgress &&
+                    isNotCompleted) {
                   return const Center(
                     child: Text('No record found'),
                   );
@@ -47,8 +76,10 @@ class BookingsScreen extends StatelessWidget {
                   ServiceRequest currentItem =
                       _bookServiceStore.serviceRequestList[index];
 
-                  if (currentItem.serviceRequestStatus ==
-                      ServiceRequestStatus.idle) {
+                  if (currentItem.serviceRequestStatus !=
+                          ServiceRequestStatus.canceled &&
+                      currentItem.serviceRequestStatus !=
+                          ServiceRequestStatus.done) {
                     return Card(
                       child: InkWell(
                         onTap: () {

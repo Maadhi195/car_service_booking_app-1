@@ -70,10 +70,11 @@ PaymentMethod getPaymentMethodByName(String name) {
 
 enum ServiceRequestStatus {
   idle,
+  accepted,
   inprogress,
   completed,
-  canceled,
   done,
+  canceled,
 }
 
 extension ServiceRequestStatusName on ServiceRequestStatus {
@@ -82,6 +83,9 @@ extension ServiceRequestStatusName on ServiceRequestStatus {
     switch (this) {
       case ServiceRequestStatus.canceled:
         name = 'Canceled';
+        break;
+      case ServiceRequestStatus.accepted:
+        name = 'Accepted';
         break;
       case ServiceRequestStatus.completed:
         name = 'Completed';
@@ -101,6 +105,34 @@ extension ServiceRequestStatusName on ServiceRequestStatus {
     }
     return name;
   }
+
+  String getButtonTextName() {
+    String name = 'Undefined';
+    switch (this) {
+      case ServiceRequestStatus.canceled:
+        name = '';
+        break;
+      case ServiceRequestStatus.completed:
+        name = 'Approve';
+        break;
+      case ServiceRequestStatus.accepted:
+        name = '';
+        break;
+      case ServiceRequestStatus.done:
+        name = '';
+        break;
+      case ServiceRequestStatus.idle:
+        name = 'Cancel';
+        break;
+      case ServiceRequestStatus.inprogress:
+        name = '';
+        break;
+
+      default:
+        break;
+    }
+    return name;
+  }
 }
 
 ServiceRequestStatus getServiceRequestStatusByName(String name) {
@@ -112,6 +144,9 @@ ServiceRequestStatus getServiceRequestStatusByName(String name) {
       break;
     case 'Completed':
       serviceRequestStatus = ServiceRequestStatus.completed;
+      break;
+    case 'Accepted':
+      serviceRequestStatus = ServiceRequestStatus.accepted;
       break;
     case 'Done':
       serviceRequestStatus = ServiceRequestStatus.done;
