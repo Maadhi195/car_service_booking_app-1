@@ -44,7 +44,9 @@ Future<void> setupLocator() async {
   getIt.registerSingleton(AuthStore(
     getIt<CustomImageHelper>(),
   ));
-  getIt.registerSingleton(ProfileStore());
+  getIt.registerSingleton(ProfileStore(
+    getIt<CustomImageHelper>(),
+  ));
   getIt.registerSingleton(HomeScreenStore(
     getIt<ProfileStore>(),
   ));
@@ -52,7 +54,9 @@ Future<void> setupLocator() async {
     getIt<ProfileStore>(),
     getIt<CustomImageHelper>(),
   ));
-  getIt.registerSingleton(AvailableShopStore());
+  getIt.registerSingleton(AvailableShopStore(
+    getIt<ProfileStore>(),
+  ));
   getIt.registerSingleton(BookServiceStore(
     getIt<ProfileStore>(),
   ));

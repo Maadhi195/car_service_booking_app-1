@@ -64,13 +64,14 @@ class ProfileScreen extends StatelessWidget {
 
       if (fResponse.success) {
         final LatLng? newLocation = await Navigator.of(context)
-            .pushNamed(GetLocationScreen.routeName) as LatLng;
+            .pushNamed(GetLocationScreen.routeName, arguments: {
+          'startLocation': _profileStore.currentUser.userLatLng
+        }) as LatLng;
         print('recieved : $newLocation');
         if (newLocation != null) {
           _profileStore.updateUserLocation(newLocation);
           _locationController.text =
               '${_profileStore.currentUser.userLatLng.latitude.toStringAsFixed(5)},  ${_profileStore.currentUser.userLatLng.longitude.toStringAsFixed(5)}';
-
           print('updated location');
           fResponse.passed(message: 'Location Updated');
         }
@@ -86,7 +87,7 @@ class ProfileScreen extends StatelessWidget {
         success: fResponse.success);
   }
 
-  Future<void> signup(BuildContext context) async {
+  Future<void> updateProfile(BuildContext context) async {
     FunctionResponse fResponse = getIt<FunctionResponse>();
 
     if (!_formKey.currentState!.validate()) {
@@ -123,6 +124,7 @@ class ProfileScreen extends StatelessWidget {
     const double topPadding = 200;
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(),
         backgroundColor: _appColors.loginScaffoldColor,
         body: SingleChildScrollView(
           child: SizedBox(
@@ -226,6 +228,8 @@ class ProfileScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 20),
                                   TextFormField(
+                                    initialValue:
+                                        _profileStore.currentUser.name,
                                     validator:
                                         _customValidator.nonNullableString,
                                     onSaved: (String? val) {
@@ -305,7 +309,7 @@ class ProfileScreen extends StatelessWidget {
                                       Expanded(
                                         child: ElevatedButton(
                                             onPressed: () async {
-                                              await signup(context);
+                                              await updateProfile(context);
                                             },
                                             child: const Text('Update')),
                                       ),

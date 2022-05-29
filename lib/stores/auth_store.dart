@@ -27,6 +27,7 @@ abstract class _AuthStore with Store {
     address: '',
     name: '',
     password: '',
+    cnic: '',
     userBio: '',
     userImage: '',
     userLatLng: GoogleMapsHelper().defaultGoogleMapsLocation,
@@ -47,6 +48,7 @@ abstract class _AuthStore with Store {
       password: newUser.password,
       address: newUser.address,
       userBio: newUser.userBio,
+      cnic: newUser.cnic,
       userImage: image,
       userLatLng: newUser.userLatLng,
     );
@@ -61,8 +63,24 @@ abstract class _AuthStore with Store {
       password: newUser.password,
       address: newUser.address,
       userBio: newUser.userBio,
+      cnic: newUser.cnic,
       userImage: newUser.userImage,
       userLatLng: newLocation,
+    );
+  }
+
+  @action
+  void updateCnic(String newCnic) {
+    newUser = AppUser(
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      password: newUser.password,
+      address: newUser.address,
+      userBio: newUser.userBio,
+      cnic: newCnic,
+      userImage: newUser.userImage,
+      userLatLng: newUser.userLatLng,
     );
   }
 
@@ -91,6 +109,7 @@ abstract class _AuthStore with Store {
       address: '',
       name: '',
       password: '',
+      cnic: '',
       userBio: '',
       userImage: '',
       userLatLng: GoogleMapsHelper().defaultGoogleMapsLocation,
@@ -116,6 +135,7 @@ abstract class _AuthStore with Store {
             'password': newUser.password,
             'userImage': newUser.userImage,
             'address': newUser.address,
+            'cnic': newUser.cnic,
             'userBio': newUser.userBio,
             'userLatLng': GeoPoint(
                 newUser.userLatLng.latitude, newUser.userLatLng.longitude),

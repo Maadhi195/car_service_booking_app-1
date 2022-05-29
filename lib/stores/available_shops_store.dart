@@ -13,12 +13,17 @@ import '../models/vehicle.dart';
 import '../models/vehicle_service.dart';
 import '../resources/app_images.dart';
 import '../service_locator.dart';
+import 'profile_store.dart';
 
 part 'available_shops_store.g.dart';
 
 class AvailableShopStore = _AvailableShopStore with _$AvailableShopStore;
 
 abstract class _AvailableShopStore with Store {
+  _AvailableShopStore(this._profileStore);
+
+  final ProfileStore _profileStore;
+
   @observable
   Vehicle? selectedVehicle;
   @observable
@@ -63,36 +68,34 @@ abstract class _AvailableShopStore with Store {
     print('selected vehicle : ${newVehicle.vehicleModel}');
   }
 
-  Future<void> loadAvailableServices() async {
+  Future<void> loadAvailableServices(LatLng currentUserLocation) async {
     isLoadingServices = true;
+    await _profileStore.loadProfile();
+
+    log('current user long : ${_profileStore.currentUser.userLatLng.latitude}');
     try {
       if (firebaseAuth.currentUser?.uid == null) {
         return;
       }
-
       availableServicesList.clear();
-
       await firestoreServicesCollection
           .get()
           .then((QuerySnapshot querySnapshot) {
         for (var doc in querySnapshot.docs) {
-          print(' total services found : ${querySnapshot.docs.length}');
-
-          print(doc['shopName']);
-          print(doc['serviceName']);
-          print(doc['serviceType']);
-          print(doc['vehicleType']);
           if (doc['vehicleType'] == selectedVehicle?.vehicleType.getName() &&
               doc['serviceType'] == selectedServiceType?.getName()) {
-            print('id : ${doc.id}');
+            LatLng shopLocation;
+            final GeoPoint dbLocation = doc['shopLocation'] as GeoPoint;
+            shopLocation = LatLng(
+              dbLocation.latitude,
+              dbLocation.longitude,
+            );
+            log('id : ${doc.id}');
 
-            LatLng shopLocation = GoogleMapsHelper().defaultGoogleMapsLocation;
-            if (doc['shopLocation'] == null) {
-              final GeoPoint dbLocation = doc['shopLocation'] as GeoPoint;
-              shopLocation = LatLng(dbLocation.latitude, dbLocation.longitude);
-            }
-            print(shopLocation.toString());
+            log(shopLocation.latitude.toString());
+            log(shopLocation.longitude.toString());
 
+            log('after finalizing location');
             availableServicesList.add(VehicleService(
               id: doc.id,
               shopId: doc['shopId'],
@@ -105,10 +108,17 @@ abstract class _AvailableShopStore with Store {
               rating: doc['rating'],
               cost: doc['cost'],
               address: doc['address'],
-              distance: 1,
+              distance: GoogleMapsHelper().calculateDistanceBetweenGeoPoints(
+                shopLocation.latitude,
+                shopLocation.longitude,
+                _profileStore.currentUser.userLatLng.latitude,
+                _profileStore.currentUser.userLatLng.longitude,
+              ),
               shopLocation: shopLocation,
             ));
-          }
+            availableServicesList
+                .sort((a, b) => a.distance.compareTo(b.distance));
+          } else {}
         }
       });
     } catch (e) {

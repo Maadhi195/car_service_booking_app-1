@@ -687,15 +687,9 @@ class ProfileWidget extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
                 child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(200),
-                child: buildImage(
-                  theme,
-                  userProfileScreenStore.currentUser.userImage,
-                ),
-              ),
-            )),
+                    padding: const EdgeInsets.all(8.0),
+                    child: customImageCircle(
+                        theme, userProfileScreenStore.currentUser.userImage))),
             Expanded(
                 flex: 2,
                 child: Column(
@@ -927,11 +921,8 @@ class SingleVehicleWidget extends StatelessWidget {
             Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
           },
           child: ListTile(
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(150),
-              child: buildImage(theme, currentItem.vehicleImages.first,
-                  height: 50, width: 50),
-            ),
+            leading: customImageCircle(theme, currentItem.vehicleImages.first,
+                radius: 50),
             title: Text(currentItem.vehicleModel),
             subtitle: Text(currentItem.vehicleCompany),
             trailing: Text(currentItem.vehicleType.getName()),
@@ -973,5 +964,5 @@ Future<void> findService(
         );
       });
 
-  Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
+  // Navigator.of(context).pushNamed(AvailableShopsScreen.routeName);
 }

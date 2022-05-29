@@ -49,6 +49,14 @@ mixin _$ProfileStore on _ProfileStore, Store {
     return _$loadProfileAsyncAction.run(() => super.loadProfile());
   }
 
+  late final _$updateProfileAsyncAction =
+      AsyncAction('_ProfileStore.updateProfile', context: context);
+
+  @override
+  Future<FunctionResponse> updateProfile() {
+    return _$updateProfileAsyncAction.run(() => super.updateProfile());
+  }
+
   late final _$_ProfileStoreActionController =
       ActionController(name: '_ProfileStore', context: context);
 
@@ -58,6 +66,61 @@ mixin _$ProfileStore on _ProfileStore, Store {
         name: '_ProfileStore.toggleIsLoading');
     try {
       return super.toggleIsLoading();
+    } finally {
+      _$_ProfileStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateUserAddress(String address) {
+    final _$actionInfo = _$_ProfileStoreActionController.startAction(
+        name: '_ProfileStore.updateUserAddress');
+    try {
+      return super.updateUserAddress(address);
+    } finally {
+      _$_ProfileStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateUserName(String name) {
+    final _$actionInfo = _$_ProfileStoreActionController.startAction(
+        name: '_ProfileStore.updateUserName');
+    try {
+      return super.updateUserName(name);
+    } finally {
+      _$_ProfileStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateUserImage(String image) {
+    final _$actionInfo = _$_ProfileStoreActionController.startAction(
+        name: '_ProfileStore.updateUserImage');
+    try {
+      return super.updateUserImage(image);
+    } finally {
+      _$_ProfileStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateUserLocation(LatLng location) {
+    final _$actionInfo = _$_ProfileStoreActionController.startAction(
+        name: '_ProfileStore.updateUserLocation');
+    try {
+      return super.updateUserLocation(location);
+    } finally {
+      _$_ProfileStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateUserBio(String newBio) {
+    final _$actionInfo = _$_ProfileStoreActionController.startAction(
+        name: '_ProfileStore.updateUserBio');
+    try {
+      return super.updateUserBio(newBio);
     } finally {
       _$_ProfileStoreActionController.endAction(_$actionInfo);
     }

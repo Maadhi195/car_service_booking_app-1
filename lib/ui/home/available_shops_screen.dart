@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import '../../service_locator.dart';
 import '../../stores/available_shops_store.dart';
+import '../../stores/profile_store.dart';
 import '../book_service/service_details_screen.dart';
 
 class AvailableShopsScreen extends StatefulWidget {
@@ -22,10 +23,12 @@ class AvailableShopsScreen extends StatefulWidget {
 class _AvailableShopsScreenState extends State<AvailableShopsScreen> {
   //Stores
   final AvailableShopStore _availableShopStore = getIt<AvailableShopStore>();
+  final ProfileStore _profileStore = getIt<ProfileStore>();
 
   @override
   void initState() {
-    _availableShopStore.loadAvailableServices();
+    _availableShopStore
+        .loadAvailableServices(_profileStore.currentUser.userLatLng);
     super.initState();
   }
 

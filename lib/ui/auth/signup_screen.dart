@@ -25,6 +25,7 @@ class SignupScreen extends StatelessWidget {
 
   //Form
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _locationController = TextEditingController();
 
   //Custom Utils
   final CustomValidator _customValidator = getIt<CustomValidator>();
@@ -63,11 +64,14 @@ class SignupScreen extends StatelessWidget {
       fResponse = await _connectivityHelper.checkInternetConnection();
 
       if (fResponse.success) {
-        final LatLng? newLocation = await Navigator.of(context)
-            .pushNamed(GetLocationScreen.routeName) as LatLng;
+        final LatLng? newLocation = await Navigator.of(context).pushNamed(
+            GetLocationScreen.routeName,
+            arguments: {'startLocation': null}) as LatLng;
         print('recieved : $newLocation');
         if (newLocation != null) {
           _authStore.updateUserLocation(newLocation);
+          _locationController.text =
+              '${_authStore.newUser.userLatLng.latitude.toStringAsFixed(5)},  ${_authStore.newUser.userLatLng.longitude.toStringAsFixed(5)}';
           print('updated location');
           fResponse.passed(message: 'Location Updated');
         }
@@ -294,6 +298,24 @@ class SignupScreen extends StatelessWidget {
                                       if (val == null) {
                                         return;
                                       }
+                                      _authStore.updateCnic(val);
+                                    },
+                                    keyboardType: TextInputType.text,
+                                    decoration: const InputDecoration(
+                                      label: Text('cnic'),
+                                      prefixIcon: Icon(Icons.person),
+                                    ),
+                                    maxLength: 13,
+                                  ),
+                                  const SizedBox(height: 20),
+
+                                  TextFormField(
+                                    validator:
+                                        _customValidator.nonNullableString,
+                                    onSaved: (String? val) {
+                                      if (val == null) {
+                                        return;
+                                      }
                                       _authStore.newUser.userBio = val;
                                     },
                                     keyboardType: TextInputType.text,
@@ -310,8 +332,7 @@ class SignupScreen extends StatelessWidget {
                                       readOnly: true,
                                       validator:
                                           _customValidator.nonNullableString,
-                                      initialValue:
-                                          ' ${_authStore.newUser.userLatLng.latitude.toStringAsFixed(5)} ${_authStore.newUser.userLatLng.longitude.toStringAsFixed(5)} ',
+                                      controller: _locationController,
                                       decoration: InputDecoration(
                                           label: const Text('Location'),
                                           prefixIcon:

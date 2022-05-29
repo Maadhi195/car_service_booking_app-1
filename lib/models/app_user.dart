@@ -7,6 +7,7 @@ class AppUser {
   String password;
   String userImage;
   String address;
+  String cnic;
   String userBio;
   LatLng userLatLng;
   AppUser({
@@ -16,6 +17,7 @@ class AppUser {
     required this.password,
     required this.userImage,
     required this.address,
+    required this.cnic,
     required this.userBio,
     required this.userLatLng,
   });

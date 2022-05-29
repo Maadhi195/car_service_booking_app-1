@@ -33,6 +33,7 @@ abstract class _ProfileStore with Store {
     password: '',
     address: '',
     userImage: '',
+    cnic: '',
     userBio: '',
     userLatLng: GoogleMapsHelper().defaultGoogleMapsLocation,
   );
@@ -51,6 +52,7 @@ abstract class _ProfileStore with Store {
       password: currentUser.password,
       address: address,
       userImage: currentUser.userImage,
+      cnic: currentUser.cnic,
       userBio: currentUser.userBio,
       userLatLng: currentUser.userLatLng,
     );
@@ -65,6 +67,7 @@ abstract class _ProfileStore with Store {
       password: currentUser.password,
       address: currentUser.address,
       userImage: currentUser.userImage,
+      cnic: currentUser.cnic,
       userBio: currentUser.userBio,
       userLatLng: currentUser.userLatLng,
     );
@@ -79,6 +82,7 @@ abstract class _ProfileStore with Store {
       password: currentUser.password,
       address: currentUser.address,
       userImage: image,
+      cnic: currentUser.cnic,
       userBio: currentUser.userBio,
       userLatLng: currentUser.userLatLng,
     );
@@ -93,6 +97,7 @@ abstract class _ProfileStore with Store {
       password: currentUser.password,
       address: currentUser.address,
       userImage: currentUser.userImage,
+      cnic: currentUser.cnic,
       userBio: currentUser.userBio,
       userLatLng: location,
     );
@@ -107,6 +112,7 @@ abstract class _ProfileStore with Store {
       password: currentUser.password,
       address: currentUser.address,
       userImage: currentUser.userImage,
+      cnic: currentUser.cnic,
       userBio: newBio,
       userLatLng: currentUser.userLatLng,
     );
@@ -142,6 +148,7 @@ abstract class _ProfileStore with Store {
             email: data['email'],
             password: data['password'],
             address: data['address'],
+            cnic: data['cnic'],
             userImage: data['userImage'],
             userBio: data['userBio'],
             userLatLng: newUserLatLng,
@@ -167,15 +174,20 @@ abstract class _ProfileStore with Store {
     try {
       final User? user = firebaseAuth.currentUser;
       if (user != null) {
-        fResponse = await _customImageHelper.uploadPicture(
-            (currentUser.userImage), serviceShopImagesDirectory);
-        if (fResponse.success) {
+        if ((_customImageHelper.getImageType(currentUser.userImage)) ==
+            ImageType.network) {
+          fResponse.passed();
+        } else {
+          fResponse = await _customImageHelper.uploadPicture(
+              (currentUser.userImage), userImagesDirectory);
           updateUserImage(fResponse.data);
+        }
+        if (fResponse.success) {
           log('new name : ${currentUser.name}');
           log('new address : ${currentUser.address}');
           log('new location : ${currentUser.userLatLng.latitude.toStringAsFixed(4)} ${currentUser.userLatLng.longitude.toStringAsFixed(4)}');
 
-          await firestoreShopsCollection.doc(user.uid).update({
+          await firestoreUsersCollection.doc(user.uid).update({
             'name': currentUser.name,
             'address': currentUser.address,
             'userImage': currentUser.userImage,
