@@ -15,7 +15,7 @@ import '../../models/vehicle.dart';
 import '../../stores/available_shops_store.dart';
 import '../../stores/book_service_store.dart';
 import '../../stores/manage_vehicle_store.dart';
-import '../../stores/user_profile_screen_store.dart';
+import '../../stores/profile_store.dart';
 import '../../theme/my_app_colors.dart';
 import '../../resources/app_images.dart';
 
@@ -49,8 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //Stores
   final HomeScreenStore _homeScreenStore = getIt<HomeScreenStore>();
 
-  final UserProfileScreenStore _userProfileScreenStore =
-      getIt<UserProfileScreenStore>();
+  final ProfileStore _profileStore = getIt<ProfileStore>();
 
   final ManageVehicleStore _manageVehicleStore = getIt<ManageVehicleStore>();
   final AvailableShopStore _availableShopStore = getIt<AvailableShopStore>();
@@ -94,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     print('load data');
-    _homeScreenStore.loadAllData();
+    _profileStore.loadProfile();
     super.initState();
   }
 
@@ -107,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return SafeArea(
       child: Observer(builder: (_) {
-        return _homeScreenStore.isLoadingHomeScreenData
+        return _profileStore.isLoading
             ? const Scaffold(
                 body: Center(
                   child: CircularProgressIndicator.adaptive(),
@@ -142,8 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             ProfileWidget(
                                 theme: theme,
-                                userProfileScreenStore:
-                                    _userProfileScreenStore),
+                                userProfileScreenStore: _profileStore),
                             const SizedBox(height: 20),
                             BookingStats(
                                 theme: theme,
@@ -226,7 +224,7 @@ class ServiceTabs extends StatelessWidget {
                         );
                       });
                 },
-                child: customContainer(
+                child: customCard(
                   height: 100,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -260,7 +258,7 @@ class ServiceTabs extends StatelessWidget {
                         );
                       });
                 },
-                child: customContainer(
+                child: customCard(
                   height: 100,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -295,7 +293,7 @@ class ServiceTabs extends StatelessWidget {
                         );
                       });
                 },
-                child: customContainer(
+                child: customCard(
                   height: 100,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -524,7 +522,7 @@ class BookingStats extends StatelessWidget {
   final BookServiceStore bookServiceStore;
   @override
   Widget build(BuildContext context) {
-    return customContainer(
+    return customCard(
         height: 100,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -677,14 +675,13 @@ class ProfileWidget extends StatelessWidget {
       {Key? key, required this.theme, required this.userProfileScreenStore})
       : super(key: key);
   final ThemeData theme;
-  final UserProfileScreenStore userProfileScreenStore;
+  final ProfileStore userProfileScreenStore;
   @override
   Widget build(BuildContext context) {
-    return customContainer(
+    return customCard(
       height: 120,
       child: InkWell(
-        onTap: () =>
-            Navigator.of(context).pushNamed(UserProfileScreen.routeName),
+        onTap: () => Navigator.of(context).pushNamed(ProfileScreen.routeName),
         child: Row(
           children: [
             const SizedBox(width: 10),
@@ -706,7 +703,7 @@ class ProfileWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      '${userProfileScreenStore.currentUser.firstName} ${userProfileScreenStore.currentUser.lastName}',
+                      userProfileScreenStore.currentUser.name,
                       style: theme.textTheme.headline3,
                     ),
                     Text(
@@ -781,10 +778,10 @@ class BookingHistoryList extends StatelessWidget {
                       children: [
                         Row(
                           key: ValueKey(
-                              homeScreenStore.bookingHistoryList[index]),
+                              bookServiceStore.serviceRequestList[index]),
                           children: [
                             Expanded(
-                              child: customContainer(
+                              child: customCard(
                                 child: Container(
                                   color: currentItem.serviceRequestStatus ==
                                           ServiceRequestStatus.canceled
@@ -923,7 +920,7 @@ class SingleVehicleWidget extends StatelessWidget {
       key: ValueKey(currentItem.id),
       direction: DismissDirection.endToStart,
       onDismissed: (DismissDirection dismissDirection) {},
-      child: customContainer(
+      child: customCard(
         child: InkWell(
           onTap: () {
             _availableShopStore.updateSelectedVehicle(currentItem);

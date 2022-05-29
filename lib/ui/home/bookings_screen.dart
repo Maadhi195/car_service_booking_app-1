@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 
+import '../../custom_widgets/custom_wrappers.dart';
 import '../../models/service_request.dart';
 import '../../models/vehicle_service.dart';
 import '../../service_locator.dart';
@@ -80,7 +81,7 @@ class BookingsScreen extends StatelessWidget {
                           ServiceRequestStatus.canceled &&
                       currentItem.serviceRequestStatus !=
                           ServiceRequestStatus.done) {
-                    return Card(
+                    return customCard(
                       child: InkWell(
                         onTap: () {
                           Navigator.of(context).pushNamed(

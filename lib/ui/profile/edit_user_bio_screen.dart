@@ -4,7 +4,7 @@ import '../../custom_utils/connectivity_helper.dart';
 import '../../custom_utils/custom_alerts.dart';
 import '../../custom_utils/custom_form_helper.dart';
 import '../../service_locator.dart';
-import '../../stores/user_profile_screen_store.dart';
+import '../../stores/profile_store.dart';
 import '../custom_widgets/appbar_widget.dart';
 
 //Custom Utilities
@@ -26,8 +26,7 @@ class EditUserBioScreen extends StatelessWidget {
   final CustomFormHelper _customFormHelper = getIt<CustomFormHelper>();
 
   //Stores
-  final UserProfileScreenStore _userProfileScreenStore =
-      getIt<UserProfileScreenStore>();
+  final ProfileStore _profileStore = getIt<ProfileStore>();
 
   //Functions
   Future<void> updateUserBio(BuildContext context) async {
@@ -41,8 +40,7 @@ class EditUserBioScreen extends StatelessWidget {
       _customAlerts.showLoaderDialog(context);
       fResponse = await _connectivityHelper.checkInternetConnection();
       if (fResponse.success) {
-        fResponse =
-            await _userProfileScreenStore.updateUserBio(formData['bio'] ?? '');
+        fResponse = await _profileStore.updateUserBio(formData['bio'] ?? '');
       }
       _customAlerts.popLoader(context);
     }
@@ -106,8 +104,7 @@ class EditUserBioScreen extends StatelessWidget {
                               }
                               formData['bio'] = val;
                             },
-                            initialValue:
-                                _userProfileScreenStore.currentUser.userBio,
+                            initialValue: _profileStore.currentUser.userBio,
                             keyboardType: TextInputType.text,
                             decoration: const InputDecoration(
                               labelText: 'Your Bio',

@@ -151,7 +151,7 @@ class SignupScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(18.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
-                          child: customContainer(
+                          child: customCard(
                             padding: const EdgeInsets.all(15.0),
                             child: Form(
                               key: _formKey,
@@ -226,30 +226,16 @@ class SignupScreen extends StatelessWidget {
                                       if (val == null) {
                                         return;
                                       }
-                                      _authStore.newUser.firstName = val;
+
+                                      _authStore.newUser.name = val;
                                     },
                                     keyboardType: TextInputType.text,
                                     decoration: const InputDecoration(
-                                      label: Text('First Name'),
+                                      label: Text('Name'),
                                       prefixIcon: Icon(Icons.person),
                                     ),
                                   ),
-                                  const SizedBox(height: 20),
-                                  TextFormField(
-                                    validator:
-                                        _customValidator.nonNullableString,
-                                    onSaved: (String? val) {
-                                      if (val == null) {
-                                        return;
-                                      }
-                                      _authStore.newUser.lastName = val;
-                                    },
-                                    keyboardType: TextInputType.text,
-                                    decoration: const InputDecoration(
-                                      label: Text('Last Name'),
-                                      prefixIcon: Icon(Icons.person),
-                                    ),
-                                  ),
+
                                   const SizedBox(height: 20),
                                   TextFormField(
                                     validator: _customValidator.validateEmail,

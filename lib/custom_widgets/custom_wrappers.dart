@@ -8,7 +8,7 @@ import '../custom_utils/image_helper.dart';
 //Theme
 final AppColors _appColor = getIt<AppColors>();
 
-Widget customContainer({
+Widget customCard({
   double? height,
   double? width,
   required Widget child,
@@ -44,10 +44,12 @@ Widget customImageBox(double width, ThemeData theme,
   final CustomImageHelper _customImageHelper = getIt<CustomImageHelper>();
   ImageType imageType = _customImageHelper.getImageType(image);
   double imageHeight = 200;
+  const BoxFit customFit = BoxFit.cover;
+
   return InkWell(
     key: key,
     onTap: onTap,
-    child: customContainer(
+    child: customCard(
       child: Column(
         children: [
           imageType == ImageType.file
@@ -55,14 +57,14 @@ Widget customImageBox(double width, ThemeData theme,
                   File(image),
                   // width: width * 0.9,
                   height: imageHeight,
-                  fit: BoxFit.cover,
+                  fit: customFit,
                 )
               : (imageType == ImageType.network
                   ? CachedNetworkImage(
                       imageUrl: image,
                       // width: width * 0.9,
                       height: imageHeight,
-                      fit: BoxFit.cover,
+                      fit: customFit,
                       progressIndicatorBuilder:
                           (context, url, downloadProgress) => Center(
                               child: CircularProgressIndicator.adaptive(
@@ -74,7 +76,7 @@ Widget customImageBox(double width, ThemeData theme,
                       image,
                       // width: width * 0.9,
                       height: imageHeight,
-                      fit: BoxFit.cover,
+                      fit: customFit,
                     )),
           const SizedBox(height: 10),
           Text(
@@ -102,13 +104,14 @@ Widget buildImage(ThemeData theme, String imagePath,
     {double? height, double? width}) {
   final CustomImageHelper _customImageHelper = getIt<CustomImageHelper>();
   ImageType imageType = _customImageHelper.getImageType(imagePath);
+  const BoxFit customFit = BoxFit.cover;
 
   final Widget returnAble = imagePath.isEmpty
       ? const SizedBox()
       : (imageType == ImageType.network
           ? CachedNetworkImage(
               imageUrl: imagePath,
-              fit: BoxFit.cover,
+              fit: customFit,
               height: height,
               width: width,
               progressIndicatorBuilder: (context, url, downloadProgress) =>
@@ -123,7 +126,7 @@ Widget buildImage(ThemeData theme, String imagePath,
                   File(imagePath),
                   height: height,
                   width: width,
-                  fit: BoxFit.cover,
+                  fit: customFit,
                   errorBuilder: (BuildContext context, Object exception,
                       StackTrace? stackTrace) {
                     return Icon(
@@ -136,7 +139,7 @@ Widget buildImage(ThemeData theme, String imagePath,
                   imagePath,
                   height: height,
                   width: width,
-                  fit: BoxFit.fill,
+                  fit: customFit,
                   errorBuilder: (BuildContext context, Object exception,
                       StackTrace? stackTrace) {
                     return Icon(
@@ -148,3 +151,22 @@ Widget buildImage(ThemeData theme, String imagePath,
 
   return returnAble;
 }
+
+Widget customImageCircle(
+  ThemeData theme,
+  String source, {
+  double radius = 100,
+  VoidCallback? onTap,
+}) =>
+    InkWell(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(2000),
+        child: buildImage(
+          theme,
+          source,
+          height: radius,
+          width: radius,
+        ),
+      ),
+    );

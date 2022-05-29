@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
         ChatScreen.routeName: (ctx) => const ChatScreen(),
         ShopScreen.routeName: (ctx) => const ShopScreen(),
         ServiceBookingScreen.routeName: (ctx) => const ServiceBookingScreen(),
-        UserProfileScreen.routeName: (ctx) => UserProfileScreen(),
+        ProfileScreen.routeName: (ctx) => ProfileScreen(),
         EditUserAddressScreen.routeName: (ctx) => EditUserAddressScreen(),
         EditUserNameScreen.routeName: (ctx) => EditUserNameScreen(),
         EditUserBioScreen.routeName: (ctx) => EditUserBioScreen(),

@@ -17,7 +17,7 @@ import 'custom_utils/custom_form_helper.dart';
 import 'custom_utils/image_helper.dart';
 
 //Stores
-import 'stores/user_profile_screen_store.dart';
+import 'stores/profile_store.dart';
 import 'stores/home_screen_store.dart';
 
 final getIt = GetIt.instance;
@@ -44,16 +44,16 @@ Future<void> setupLocator() async {
   getIt.registerSingleton(AuthStore(
     getIt<CustomImageHelper>(),
   ));
-  getIt.registerSingleton(UserProfileScreenStore());
+  getIt.registerSingleton(ProfileStore());
   getIt.registerSingleton(HomeScreenStore(
-    getIt<UserProfileScreenStore>(),
+    getIt<ProfileStore>(),
   ));
   getIt.registerSingleton(ManageVehicleStore(
-    getIt<UserProfileScreenStore>(),
+    getIt<ProfileStore>(),
     getIt<CustomImageHelper>(),
   ));
   getIt.registerSingleton(AvailableShopStore());
   getIt.registerSingleton(BookServiceStore(
-    getIt<UserProfileScreenStore>(),
+    getIt<ProfileStore>(),
   ));
 }

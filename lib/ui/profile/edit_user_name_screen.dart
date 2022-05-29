@@ -4,7 +4,7 @@ import '../../custom_utils/connectivity_helper.dart';
 import '../../custom_utils/custom_alerts.dart';
 import '../../custom_utils/custom_form_helper.dart';
 import '../../service_locator.dart';
-import '../../stores/user_profile_screen_store.dart';
+import '../../stores/profile_store.dart';
 import '../custom_widgets/appbar_widget.dart';
 
 //Custom Utilities
@@ -35,8 +35,7 @@ class EditUserNameScreen extends StatelessWidget {
   final CustomFormHelper _customFormHelper = getIt<CustomFormHelper>();
 
   //Stores
-  final UserProfileScreenStore _userProfileScreenStore =
-      getIt<UserProfileScreenStore>();
+  final ProfileStore _profileStore = getIt<ProfileStore>();
 
   //Functions
   Future<void> updateUserName(BuildContext context) async {
@@ -50,7 +49,7 @@ class EditUserNameScreen extends StatelessWidget {
       _customAlerts.showLoaderDialog(context);
       fResponse = await _connectivityHelper.checkInternetConnection();
       if (fResponse.success) {
-        fResponse = await _userProfileScreenStore.updateUserName(
+        fResponse = await _profileStore.updateUserName(
             formData.firstName, formData.lastName);
       }
       _customAlerts.popLoader(context);
@@ -102,8 +101,7 @@ class EditUserNameScreen extends StatelessWidget {
                             child: TextFormField(
                               // Handles Form Validation for First Name
                               validator: _customValidator.validateName,
-                              initialValue:
-                                  _userProfileScreenStore.currentUser.firstName,
+                              initialValue: _profileStore.currentUser.firstName,
                               decoration: const InputDecoration(
                                   labelText: 'First Name'),
                               onSaved: (String? val) {
@@ -121,8 +119,7 @@ class EditUserNameScreen extends StatelessWidget {
                             child: TextFormField(
                               // Handles Form Validation for Last Name
                               validator: _customValidator.validateName,
-                              initialValue:
-                                  _userProfileScreenStore.currentUser.lastName,
+                              initialValue: _profileStore.currentUser.lastName,
                               decoration:
                                   const InputDecoration(labelText: 'Last Name'),
                               onSaved: (String? val) {

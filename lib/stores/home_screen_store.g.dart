@@ -74,71 +74,13 @@ mixin _$HomeScreenStore on _HomeScreenStore, Store {
     });
   }
 
-  late final _$currentUserAtom =
-      Atom(name: '_HomeScreenStore.currentUser', context: context);
-
-  @override
-  AppUser get currentUser {
-    _$currentUserAtom.reportRead();
-    return super.currentUser;
-  }
-
-  @override
-  set currentUser(AppUser value) {
-    _$currentUserAtom.reportWrite(value, super.currentUser, () {
-      super.currentUser = value;
-    });
-  }
-
-  late final _$serviceShopListAtom =
-      Atom(name: '_HomeScreenStore.serviceShopList', context: context);
-
-  @override
-  ObservableList<ServiceShop> get serviceShopList {
-    _$serviceShopListAtom.reportRead();
-    return super.serviceShopList;
-  }
-
-  @override
-  set serviceShopList(ObservableList<ServiceShop> value) {
-    _$serviceShopListAtom.reportWrite(value, super.serviceShopList, () {
-      super.serviceShopList = value;
-    });
-  }
-
-  late final _$_bookingHistoryListAtom =
-      Atom(name: '_HomeScreenStore._bookingHistoryList', context: context);
-
-  @override
-  ObservableList<BookingHistory> get _bookingHistoryList {
-    _$_bookingHistoryListAtom.reportRead();
-    return super._bookingHistoryList;
-  }
-
-  @override
-  set _bookingHistoryList(ObservableList<BookingHistory> value) {
-    _$_bookingHistoryListAtom.reportWrite(value, super._bookingHistoryList, () {
-      super._bookingHistoryList = value;
-    });
-  }
-
-  late final _$loadAllDataAsyncAction =
-      AsyncAction('_HomeScreenStore.loadAllData', context: context);
-
-  @override
-  Future<void> loadAllData() {
-    return _$loadAllDataAsyncAction.run(() => super.loadAllData());
-  }
-
   @override
   String toString() {
     return '''
 bookings: ${bookings},
 messages: ${messages},
 totalUserVehicles: ${totalUserVehicles},
-isLoadingHomeScreenData: ${isLoadingHomeScreenData},
-currentUser: ${currentUser},
-serviceShopList: ${serviceShopList}
+isLoadingHomeScreenData: ${isLoadingHomeScreenData}
     ''';
   }
 }

@@ -30,7 +30,7 @@ ThemeData lightTheme(BuildContext context) => ThemeData(
           primary: primaryColor, secondary: accentColor, error: errorColor),
       primaryColor: primaryColor,
       errorColor: errorColor,
-      primaryColorBrightness: Brightness.light,
+      brightness: Brightness.light,
       primaryColorLight: Colors.blue.shade100,
       cardColor: accentColor,
       scaffoldBackgroundColor: Colors.white.withAlpha(250),

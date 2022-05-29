@@ -127,7 +127,7 @@ class SingleVehicleWidget extends StatelessWidget {
       key: ValueKey(currentItem.id),
       direction: DismissDirection.endToStart,
       onDismissed: (DismissDirection dismissDirection) {},
-      child: Card(
+      child: customCard(
         child: ListTile(
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(120),

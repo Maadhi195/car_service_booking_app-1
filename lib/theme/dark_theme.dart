@@ -30,7 +30,7 @@ ThemeData darkTheme(BuildContext context) => ThemeData(
           .copyWith(primary: primaryColor, secondary: accentColor),
       primaryColor: primaryColor,
       errorColor: errorColor,
-      primaryColorBrightness: Brightness.dark,
+      brightness: Brightness.dark,
       primaryColorLight: Colors.blue.shade900,
       cardColor: accentColor,
       scaffoldBackgroundColor: Colors.black87,

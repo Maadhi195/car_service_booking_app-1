@@ -6,7 +6,7 @@ import '../../custom_utils/custom_form_helper.dart';
 import '../../custom_utils/custom_validator.dart';
 import '../../custom_utils/function_response.dart';
 import '../../service_locator.dart';
-import '../../stores/user_profile_screen_store.dart';
+import '../../stores/profile_store.dart';
 import '../custom_widgets/appbar_widget.dart';
 
 class EditUserAddressScreen extends StatelessWidget {
@@ -24,8 +24,7 @@ class EditUserAddressScreen extends StatelessWidget {
   final CustomFormHelper _customFormHelper = getIt<CustomFormHelper>();
 
   //Stores
-  final UserProfileScreenStore _userProfileScreenStore =
-      getIt<UserProfileScreenStore>();
+  final ProfileStore _profileStore = getIt<ProfileStore>();
 
   //Functions
   Future<void> updateUserAddress(BuildContext context) async {
@@ -39,8 +38,8 @@ class EditUserAddressScreen extends StatelessWidget {
       _customAlerts.showLoaderDialog(context);
       fResponse = await _connectivityHelper.checkInternetConnection();
       if (fResponse.success) {
-        fResponse = await _userProfileScreenStore
-            .updateUserAddress(formData['address'] ?? '');
+        fResponse =
+            await _profileStore.updateUserAddress(formData['address'] ?? '');
       }
       _customAlerts.popLoader(context);
     }
@@ -104,8 +103,7 @@ class EditUserAddressScreen extends StatelessWidget {
                               }
                               formData['address'] = val;
                             },
-                            initialValue:
-                                _userProfileScreenStore.currentUser.address,
+                            initialValue: _profileStore.currentUser.address,
                             keyboardType: TextInputType.text,
                             decoration: const InputDecoration(
                               labelText: 'Your Address',

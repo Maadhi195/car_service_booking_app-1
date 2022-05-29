@@ -65,7 +65,7 @@ class ServiceDetails extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(children: [
-            customContainer(
+            customCard(
               child: buildImage(
                 theme,
                 vehicleService.coverImage,
@@ -74,7 +74,7 @@ class ServiceDetails extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            customContainer(
+            customCard(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [

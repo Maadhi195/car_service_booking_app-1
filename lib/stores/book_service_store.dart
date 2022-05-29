@@ -12,7 +12,7 @@ import '../models/app_user.dart';
 import '../models/service_request.dart';
 import '../models/vehicle_service.dart';
 import '../service_locator.dart';
-import 'user_profile_screen_store.dart';
+import 'profile_store.dart';
 
 part 'book_service_store.g.dart';
 
@@ -20,7 +20,7 @@ class BookServiceStore = _BookServiceStore with _$BookServiceStore;
 
 abstract class _BookServiceStore with Store {
   _BookServiceStore(this._profileScreenStore);
-  final UserProfileScreenStore _profileScreenStore;
+  final ProfileStore _profileScreenStore;
 
   @observable
   bool isLoadingOrders = false;

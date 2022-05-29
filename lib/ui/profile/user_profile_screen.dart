@@ -1,29 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-
+import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
+import '../../custom_utils/connectivity_helper.dart';
 import '../../custom_utils/custom_alerts.dart';
-import '../../custom_utils/google_maps_helper.dart';
-import '../../custom_utils/image_helper.dart';
+import '../../custom_utils/custom_form_helper.dart';
+import '../../custom_utils/custom_validator.dart';
 import '../../custom_utils/function_response.dart';
+import '../../custom_utils/image_helper.dart';
+import '../../custom_widgets/custom_wrappers.dart';
+import '../../resources/app_images.dart';
 import '../../service_locator.dart';
-import '../../stores/user_profile_screen_store.dart';
-import 'edit_user_address_screen.dart';
-import 'edit_user_bio_screen.dart';
-import 'edit_user_name_screen.dart';
-import 'widget/display_image_widget.dart';
+import '../../stores/profile_store.dart';
+import '../../theme/my_app_colors.dart';
+//UI
+import '../custom_widgets/get_location_screen.dart';
+import '../../ui/home/home_screen.dart';
 
-class UserProfileScreen extends StatelessWidget {
-  UserProfileScreen({Key? key}) : super(key: key);
-  static const routeName = '/user-profile-screen';
+class ProfileScreen extends StatelessWidget {
+  ProfileScreen({Key? key}) : super(key: key);
+  static const routeName = '/profile-screen';
+
+  final AppColors _appColors = getIt<AppColors>();
+
+  //Form
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _locationController = TextEditingController();
+
+  //Custom Utils
+  final CustomValidator _customValidator = getIt<CustomValidator>();
+  final CustomAlerts _customAlerts = getIt<CustomAlerts>();
+  final CustomImageHelper _customImageHelper = getIt<CustomImageHelper>();
+  final CustomFormHelper _customFormHelper = getIt<CustomFormHelper>();
+  final ConnectivityHelper _connectivityHelper = getIt<ConnectivityHelper>();
 
   //Stores
-  final UserProfileScreenStore _userProfileScreenStore =
-      getIt<UserProfileScreenStore>();
-
-  //Custom Utilities
-  final CustomImageHelper _customImageHelper = getIt<CustomImageHelper>();
-  final CustomAlerts _customAlerts = getIt<CustomAlerts>();
-  final GoogleMapsHelper _googleMapsHelper = getIt<GoogleMapsHelper>();
+  final ProfileStore _profileStore = getIt<ProfileStore>();
 
   //Functions
   Future<void> changeUserImage(BuildContext context) async {
@@ -35,31 +46,71 @@ class UserProfileScreen extends StatelessWidget {
       fResponse = await _customImageHelper.pickUserImage(context);
 
       if (fResponse.success) {
-        fResponse =
-            await _userProfileScreenStore.updateUserImage(fResponse.data);
+        _profileStore.updateUserImage(fResponse.data);
+        fResponse.passed(message: 'Added new Image');
       }
       _customAlerts.popLoader(context);
     } catch (e) {
-      fResponse.failed(message: 'Unable to change user Image : $e');
+      fResponse.failed(message: 'Unable to add cover Image : $e');
     }
   }
 
-  Future<void> changeUserLatLng(BuildContext context) async {
+  Future<void> getLocation(context) async {
     FunctionResponse fResponse = getIt<FunctionResponse>();
 
     try {
-      // _customAlerts.showLoaderDialog(context);
-
-      // fResponse = _googleMapsHelper.showPlacePicker(context);
+      _customAlerts.showLoaderDialog(context);
+      fResponse = await _connectivityHelper.checkInternetConnection();
 
       if (fResponse.success) {
-        // final PickResult pickResult = fResponse.data;
-        fResponse =
-            await _userProfileScreenStore.updateUserLatLng(fResponse.data);
+        final LatLng? newLocation = await Navigator.of(context)
+            .pushNamed(GetLocationScreen.routeName) as LatLng;
+        print('recieved : $newLocation');
+        if (newLocation != null) {
+          _profileStore.updateUserLocation(newLocation);
+          _locationController.text =
+              '${_profileStore.currentUser.userLatLng.latitude.toStringAsFixed(5)},  ${_profileStore.currentUser.userLatLng.longitude.toStringAsFixed(5)}';
+
+          print('updated location');
+          fResponse.passed(message: 'Location Updated');
+        }
       }
-      // _customAlerts.popLoader(context);
     } catch (e) {
-      fResponse.failed(message: 'Unable to change user LatLng : $e');
+      print(e);
+    }
+    _customAlerts.popLoader(context);
+
+    fResponse.printResponse();
+    //show snackbar
+    _customAlerts.showSnackBar(context, fResponse.message,
+        success: fResponse.success);
+  }
+
+  Future<void> signup(BuildContext context) async {
+    FunctionResponse fResponse = getIt<FunctionResponse>();
+
+    if (!_formKey.currentState!.validate()) {
+      fResponse.failed(message: 'Please enter valid inputs');
+    } else if (_profileStore.currentUser.userImage.isEmpty) {
+      fResponse.failed(message: 'Please add a cover image');
+    } else {
+      _customFormHelper.unfocusFormFields(context);
+      _formKey.currentState!.save();
+      _customAlerts.showLoaderDialog(context);
+      fResponse = await _connectivityHelper.checkInternetConnection();
+      if (fResponse.success) {
+        fResponse = await _profileStore.updateProfile();
+      }
+      _customAlerts.popLoader(context);
+    }
+
+    fResponse.printResponse();
+    //show snackbar
+    _customAlerts.showSnackBar(context, fResponse.message,
+        success: fResponse.success);
+    if (fResponse.success) {
+      //Go to Home
+      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
     }
   }
 
@@ -69,120 +120,213 @@ class UserProfileScreen extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
+    const double topPadding = 200;
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(),
-        body: Column(
-          children: [
-            AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              toolbarHeight: 10,
-            ),
-            const Center(
-                child: Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                    child: Text(
-                      'Edit Profile',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w700,
-                        color: Color.fromRGBO(64, 105, 225, 1),
+        backgroundColor: _appColors.loginScaffoldColor,
+        body: SingleChildScrollView(
+          child: SizedBox(
+            height: screenHeight * 1.5,
+            width: screenWidth,
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: Container(
+                    height: screenHeight * 0.35,
+                    width: screenWidth,
+                    color: theme.colorScheme.primary,
+                    child: Center(
+                      child: Image.asset(
+                        appLogo,
+                        height: 100,
                       ),
-                    ))),
-            Observer(builder: (_) {
-              return InkWell(
-                  onTap: () async {
-                    await changeUserImage(context);
-                  },
-                  child: DisplayImage(
-                    imagePath: _userProfileScreenStore.currentUser.userImage,
-                    onPressed: () {},
-                  ));
-            }),
-            const SizedBox(height: 20),
-            Observer(builder: (_) {
-              return buildUserInfoDisplay(
-                context,
-                theme,
-                '${_userProfileScreenStore.currentUser.firstName} ${_userProfileScreenStore.currentUser.lastName}',
-                'Name',
-                EditUserNameScreen.routeName,
-              );
-            }),
-            Observer(builder: (_) {
-              return buildUserInfoDisplay(
-                  context,
-                  theme,
-                  _userProfileScreenStore.currentUser.address,
-                  'Address',
-                  EditUserAddressScreen.routeName);
-            }),
-            Observer(builder: (_) {
-              return buildUserInfoDisplay(
-                  context,
-                  theme,
-                  _userProfileScreenStore.currentUser.userBio,
-                  'User Bio',
-                  EditUserBioScreen.routeName);
-            }),
-            Observer(builder: (_) {
-              return buildUserInfoDisplay(
-                context,
-                theme,
-                _userProfileScreenStore.currentUser.userLatLng.toString(),
-                'User Location',
-                EditUserBioScreen.routeName,
-                onPressed: () {
-                  changeUserLatLng(context);
-                },
-              );
-            }),
-            // buildUserInfoDisplay(user.email, 'Email', EditEmailFormPage()),
-          ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: screenHeight * 0.20,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: screenWidth,
+                        padding: const EdgeInsets.all(18.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: customCard(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // const SizedBox(height: topPadding),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Update Profile',
+                                        style:
+                                            theme.textTheme.headline2?.copyWith(
+                                          color: _appColors.primaryColorLight,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                          child: InkWell(
+                                        onTap: () async {
+                                          await changeUserImage(context);
+                                        },
+                                        child: Observer(builder: (_) {
+                                          return Container(
+                                            clipBehavior: Clip.hardEdge,
+                                            decoration: const BoxDecoration(),
+                                            child: CircleAvatar(
+                                              radius: 50,
+                                              // clipBehavior: Clip.hardEdge,
+                                              // borderRadius: BorderRadius.circular(100),
+                                              backgroundColor: _profileStore
+                                                      .currentUser
+                                                      .userImage
+                                                      .isEmpty
+                                                  ? null
+                                                  : Colors.transparent,
+                                              child: _profileStore.currentUser
+                                                      .userImage.isEmpty
+                                                  ? const Center(
+                                                      child: Icon(
+                                                        Icons.image,
+                                                        size: 40,
+                                                      ),
+                                                    )
+                                                  : ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              100),
+                                                      child: buildImage(
+                                                        theme,
+                                                        _profileStore
+                                                            .currentUser
+                                                            .userImage,
+                                                        height: 100,
+                                                        width: 100,
+                                                      ),
+                                                    ),
+                                            ),
+                                          );
+                                        }),
+                                      )),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20),
+                                  TextFormField(
+                                    validator:
+                                        _customValidator.nonNullableString,
+                                    onSaved: (String? val) {
+                                      if (val == null) {
+                                        return;
+                                      }
+                                      _profileStore.updateUserName(val);
+                                    },
+                                    keyboardType: TextInputType.text,
+                                    decoration: const InputDecoration(
+                                      label: Text('Name'),
+                                      prefixIcon: Icon(Icons.person),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 20),
+
+                                  TextFormField(
+                                    initialValue:
+                                        _profileStore.currentUser.address,
+                                    validator:
+                                        _customValidator.nonNullableString,
+                                    onSaved: (String? val) {
+                                      if (val == null) {
+                                        return;
+                                      }
+                                      _profileStore.updateUserAddress(val);
+                                    },
+                                    keyboardType: TextInputType.text,
+                                    decoration: const InputDecoration(
+                                      label: Text('Address'),
+                                      prefixIcon: Icon(Icons.person),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+
+                                  TextFormField(
+                                    initialValue:
+                                        _profileStore.currentUser.userBio,
+                                    validator:
+                                        _customValidator.nonNullableString,
+                                    onSaved: (String? val) {
+                                      if (val == null) {
+                                        return;
+                                      }
+                                      _profileStore.updateUserBio(val);
+                                    },
+                                    keyboardType: TextInputType.text,
+                                    decoration: const InputDecoration(
+                                      label: Text('User Bio'),
+                                      prefixIcon: Icon(Icons.person),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+
+                                  Observer(builder: (_) {
+                                    return TextFormField(
+                                      readOnly: true,
+                                      validator:
+                                          _customValidator.nonNullableString,
+                                      controller: _locationController,
+                                      decoration: InputDecoration(
+                                          label: const Text('Location'),
+                                          prefixIcon:
+                                              const Icon(Icons.location_on),
+                                          suffixIcon: IconButton(
+                                              onPressed: () async {
+                                                await getLocation(context);
+                                              },
+                                              icon: const Icon(
+                                                  Icons.map_outlined))),
+                                    );
+                                  }),
+                                  const SizedBox(height: 20),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton(
+                                            onPressed: () async {
+                                              await signup(context);
+                                            },
+                                            child: const Text('Update')),
+                                      ),
+                                    ],
+                                  ),
+
+                                  const SizedBox(height: 20),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 }
-
-Widget buildUserInfoDisplay(BuildContext context, ThemeData theme,
-        String getValue, String title, String editPage,
-        {VoidCallback? onPressed}) =>
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
-            ),
-          ),
-          // const SizedBox(
-          //   height: 5.0,
-          // ),
-          Row(
-            children: [
-              Expanded(
-                child: Text(getValue,
-                    style: theme.textTheme.headline4?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    )),
-              ),
-              IconButton(
-                onPressed: onPressed ??
-                    () {
-                      Navigator.of(context).pushNamed(editPage);
-                    },
-                icon: const Icon(Icons.edit),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-        ],
-      ),
-    );

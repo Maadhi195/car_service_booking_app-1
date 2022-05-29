@@ -11,16 +11,16 @@ import '../custom_utils/image_helper.dart';
 import '../models/app_user.dart';
 import '../models/vehicle.dart';
 import '../service_locator.dart';
-import 'user_profile_screen_store.dart';
+import 'profile_store.dart';
 
 part 'manage_vehicle_store.g.dart';
 
 class ManageVehicleStore = _ManageVehicleStore with _$ManageVehicleStore;
 
 abstract class _ManageVehicleStore with Store {
-  _ManageVehicleStore(this._userProfileScreenStore, this._customImageHelper);
+  _ManageVehicleStore(this._profileStore, this._customImageHelper);
 
-  final UserProfileScreenStore _userProfileScreenStore;
+  final ProfileStore _profileStore;
   final CustomImageHelper _customImageHelper;
 
   @observable
@@ -60,11 +60,11 @@ abstract class _ManageVehicleStore with Store {
     newVehicle.vehicleImages = vehicleImageList;
 
     try {
-      fResponse = await _userProfileScreenStore.loadProfile();
+      fResponse = await _profileStore.loadProfile();
       fResponse.printResponse();
 
       if (fResponse.success) {
-        AppUser currentUser = _userProfileScreenStore.currentUser;
+        AppUser currentUser = _profileStore.currentUser;
         List<String> newImages = [];
         for (String image in vehicleImageList) {
           fResponse = await _customImageHelper.uploadPicture(

@@ -97,7 +97,7 @@ class _AvailableShopsScreenState extends State<AvailableShopsScreen> {
                 'vehicleService': currentItem,
               });
             },
-            child: customContainer(
+            child: customCard(
               child: Column(
                 children: [
                   Row(

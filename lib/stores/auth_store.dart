@@ -25,8 +25,7 @@ abstract class _AuthStore with Store {
     id: '',
     email: '',
     address: '',
-    firstName: '',
-    lastName: '',
+    name: '',
     password: '',
     userBio: '',
     userImage: '',
@@ -43,8 +42,7 @@ abstract class _AuthStore with Store {
   void updateUserImage(String image) {
     newUser = AppUser(
       id: newUser.id,
-      firstName: newUser.firstName,
-      lastName: newUser.lastName,
+      name: newUser.name,
       email: newUser.email,
       password: newUser.password,
       address: newUser.address,
@@ -58,8 +56,7 @@ abstract class _AuthStore with Store {
   void updateUserLocation(LatLng newLocation) {
     newUser = AppUser(
       id: newUser.id,
-      firstName: newUser.firstName,
-      lastName: newUser.lastName,
+      name: newUser.name,
       email: newUser.email,
       password: newUser.password,
       address: newUser.address,
@@ -92,8 +89,7 @@ abstract class _AuthStore with Store {
       id: '',
       email: '',
       address: '',
-      firstName: '',
-      lastName: '',
+      name: '',
       password: '',
       userBio: '',
       userImage: '',
@@ -115,8 +111,7 @@ abstract class _AuthStore with Store {
           updateUserImage(fResponse.data);
 
           await firestoreUsersCollection.doc(_authResult.user!.uid).set({
-            'firstName': newUser.firstName,
-            'lastName': newUser.lastName,
+            'name': newUser.name,
             'email': newUser.email,
             'password': newUser.password,
             'userImage': newUser.userImage,

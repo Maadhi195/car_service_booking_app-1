@@ -79,7 +79,7 @@ class ServiceBookingScreen extends StatelessWidget {
             style: theme.textTheme.headline3,
           ),
           const SizedBox(height: 10),
-          customContainer(
+          customCard(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
@@ -134,7 +134,7 @@ class ServiceBookingScreen extends StatelessWidget {
             style: theme.textTheme.headline3,
           ),
           const SizedBox(height: 10),
-          customContainer(
+          customCard(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [

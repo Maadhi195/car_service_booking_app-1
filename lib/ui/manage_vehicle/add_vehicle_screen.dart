@@ -11,6 +11,7 @@ import '../../custom_utils/custom_validator.dart';
 import '../../custom_utils/function_response.dart';
 import '../../custom_utils/general_helper.dart';
 import '../../custom_utils/image_helper.dart';
+import '../../custom_widgets/custom_wrappers.dart';
 import '../../service_locator.dart';
 //Models
 import '../../models/vehicle.dart';
@@ -107,7 +108,7 @@ class AddNewVehicleScreen extends StatelessWidget {
                   style: theme.textTheme.headline3,
                 ),
                 const SizedBox(height: 20),
-                Card(
+                customCard(
                     child: Form(
                   key: _formKey,
                   child: Padding(
@@ -201,7 +202,7 @@ class AddNewVehicleScreen extends StatelessWidget {
         }
         vehicle.vehicleDescription = val;
       },
-      // initialValue: _userProfileScreenStore.user.address,
+      // initialValue: _profileStore.user.address,
       keyboardType: TextInputType.text,
       decoration: const InputDecoration(
         labelText: 'Vehicle Description',
@@ -218,7 +219,7 @@ class AddNewVehicleScreen extends StatelessWidget {
         }
         vehicle.vehicleCompany = val;
       },
-      // initialValue: _userProfileScreenStore.user.address,
+      // initialValue: _profileStore.user.address,
       keyboardType: TextInputType.text,
       decoration: const InputDecoration(
         labelText: 'Vehicle Company',
