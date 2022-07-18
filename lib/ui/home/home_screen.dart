@@ -6,6 +6,7 @@ import '../../constants/firebase_constants.dart';
 import '../../custom_utils/connectivity_helper.dart';
 import '../../custom_utils/custom_alerts.dart';
 import '../../custom_utils/function_response.dart';
+import '../../custom_utils/general_helper.dart';
 import '../../custom_utils/google_maps_helper.dart';
 import '../../custom_widgets/custom_wrappers.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ import '../../ui/profile/user_profile_screen.dart';
 import '../../stores/home_screen_store.dart';
 //Services
 import '../../service_locator.dart';
+import '../chatbox/rooms_screen.dart';
 import '../manage_vehicle/add_vehicle_screen.dart';
 import '../manage_vehicle/user_vehicle_list_screen.dart';
 import '../profile/widget/display_image_widget.dart';
@@ -118,11 +120,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                            onPressed: () {
-                              // Navigator.of(context).pushNamed(ChatScreen.routeName);
-                            },
-                            icon: const Icon(Icons.notifications)),
+                        // IconButton(
+                        //     onPressed: () {
+                        //       // push(context, RoomsScreen());
+                        //     },
+                        // icon: const Icon(Icons.chat)),
                         IconButton(
                             onPressed: () async {
                               await tryLogout(context);

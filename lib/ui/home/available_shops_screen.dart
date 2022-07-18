@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../custom_widgets/custom_wrappers.dart';
 import '../../models/vehicle_service.dart';
+import '../../repo/shop_repo.dart';
 import '../../resources/app_images.dart';
 import 'package:flutter/material.dart';
 
@@ -165,8 +166,19 @@ class _AvailableShopsScreenState extends State<AvailableShopsScreen> {
                                         )
                                       ],
                                     ),
-                                    Text(
-                                        '${currentItem.distance.toStringAsFixed(1)} km'),
+                                    FutureBuilder<double>(
+                                        future: ShopRepo.instance
+                                            .getDistance(currentItem.shopId),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData) {
+                                            return Text(
+                                              '${snapshot.data!.toStringAsFixed(1)} km',
+                                              style: theme.textTheme.headline5,
+                                            );
+                                          } else {
+                                            return const Text('');
+                                          }
+                                        }),
                                   ],
                                 ),
                                 const SizedBox(height: 5.0),

@@ -62,7 +62,7 @@ class BookingsScreen extends StatelessWidget {
                 bool isNotCompleted = _bookServiceStore.serviceRequestList
                     .where((element) =>
                         element.serviceRequestStatus ==
-                        ServiceRequestStatus.inprogress)
+                        ServiceRequestStatus.completed)
                     .toList()
                     .isEmpty;
 

@@ -21,3 +21,12 @@ dynamic modalRouteHandler(BuildContext context) {
   }
   return routeData;
 }
+
+push(context, widget) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) => widget));
+}
+
+pushReplace(context, widget) {
+  Navigator.pushReplacement(
+      context, MaterialPageRoute(builder: (context) => widget));
+}

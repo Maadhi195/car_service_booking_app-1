@@ -1,9 +1,13 @@
+import 'package:app_30_car_service_app/repo/review_repo.dart';
+import 'package:app_30_car_service_app/repo/shop_repo.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 
 import '../../custom_utils/connectivity_helper.dart';
 import '../../custom_utils/custom_alerts.dart';
 import '../../custom_utils/function_response.dart';
 import '../../custom_widgets/custom_wrappers.dart';
+import '../../models/review_model.dart';
 import '../../models/service_request.dart';
 import 'package:flutter/material.dart';
 
@@ -50,6 +54,7 @@ class BookingDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int rating = 3;
     //ThemeData & constraints
     ThemeData theme = Theme.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -97,29 +102,99 @@ class BookingDetailsScreen extends StatelessWidget {
                             ServiceRequestStatus.idle ||
                         serviceRequest.serviceRequestStatus ==
                             ServiceRequestStatus.completed)
-                    ? Row(
+                    ? Column(
                         children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                ServiceRequestStatus? nextStatus;
-
-                                if (serviceRequest.serviceRequestStatus ==
-                                    ServiceRequestStatus.idle) {
-                                  nextStatus = ServiceRequestStatus.canceled;
-                                } else if (serviceRequest
-                                        .serviceRequestStatus ==
-                                    ServiceRequestStatus.completed) {
-                                  nextStatus = ServiceRequestStatus.done;
-                                }
-
-                                assert(nextStatus != null);
-                                await updateRequestStatus(
-                                    context, serviceRequest.id, nextStatus!);
-                              },
-                              child: Text(serviceRequest.serviceRequestStatus
-                                  .getButtonTextName()),
+                          RatingBar.builder(
+                            initialRating: rating.toDouble(),
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                            itemBuilder: (context, _) => Icon(
+                              Icons.star,
+                              color: Colors.amber,
                             ),
+                            onRatingUpdate: (rating) async {
+                              rating = rating;
+
+                              print(rating);
+
+                              // Navigator.of(ctx).pop();
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    ServiceRequestStatus? nextStatus;
+
+                                    if (serviceRequest.serviceRequestStatus ==
+                                        ServiceRequestStatus.idle) {
+                                      nextStatus =
+                                          ServiceRequestStatus.canceled;
+                                    } else if (serviceRequest
+                                            .serviceRequestStatus ==
+                                        ServiceRequestStatus.completed) {
+                                      nextStatus = ServiceRequestStatus.done;
+                                    }
+                                    // await showDialog(
+                                    //     context: context,
+                                    //     builder: (ctx) => Center(
+                                    //           child: RatingBar.builder(
+                                    //             initialRating: 3,
+                                    //             minRating: 1,
+                                    //             direction: Axis.horizontal,
+                                    //             allowHalfRating: true,
+                                    //             itemCount: 5,
+                                    //             itemPadding:
+                                    //                 EdgeInsets.symmetric(
+                                    //                     horizontal: 4.0),
+                                    //             itemBuilder: (context, _) =>
+                                    //                 Icon(
+                                    //               Icons.star,
+                                    //               color: Colors.amber,
+                                    //             ),
+                                    //             onRatingUpdate: (rating) async {
+                                    //               await ReviewRepo.instance
+                                    //                   .addReview(ReviewModel(
+                                    //                       id: '',
+                                    //                       shopId: serviceRequest
+                                    //                           .shopId,
+                                    //                       userId: serviceRequest
+                                    //                           .userId,
+                                    //                       rating: rating));
+
+                                    //               print(rating);
+
+                                    //               Navigator.of(ctx).pop();
+                                    //             },
+                                    //           ),
+                                    //         ));
+
+                                    assert(nextStatus != null);
+                                    await updateRequestStatus(context,
+                                        serviceRequest.id, nextStatus!);
+                                    await ShopRepo.instance
+                                        .incrementTotalEarning(
+                                            serviceRequest.shopId,
+                                            serviceRequest.vehicleService.cost);
+
+                                    await ReviewRepo.instance.addReview(
+                                        ReviewModel(
+                                            id: '',
+                                            shopId: serviceRequest.shopId,
+                                            userId: serviceRequest.userId,
+                                            rating: rating.toDouble()));
+                                  },
+                                  child: Text(serviceRequest
+                                      .serviceRequestStatus
+                                      .getButtonTextName()),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       )

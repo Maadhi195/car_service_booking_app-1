@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../resources/app_images.dart';
 import '../../theme/dark_theme.dart';
 import '../../custom_widgets/custom_wrappers.dart';
+import '../chatbox/chat_screen.dart';
 
 class ShopScreen extends StatelessWidget {
   const ShopScreen({Key? key}) : super(key: key);
@@ -43,7 +44,11 @@ class ShopScreen extends StatelessWidget {
                           style: theme.textTheme.headline3,
                         ),
                         const Expanded(child: SizedBox()),
-                        const Icon(Icons.favorite_border),
+                        // const Icon(Icons.favorite_border),
+                        // IconButton(
+                        //     onPressed: () => Navigator.pushNamed(
+                        //         context, ChatScreen.routeName),
+                        //     icon: const Icon(Icons.chat)),
                         const SizedBox(width: 10),
                         const Icon(Icons.location_on_sharp),
                         const SizedBox(width: 10),

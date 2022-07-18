@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
         SignupScreen.routeName: (ctx) => SignupScreen(),
         HomeScreen.routeName: (ctx) => HomeScreen(),
         AvailableShopsScreen.routeName: (ctx) => AvailableShopsScreen(),
-        ChatScreen.routeName: (ctx) => const ChatScreen(),
+        // ChatScreen.routeName: (ctx) => const ChatScreen(),
         ShopScreen.routeName: (ctx) => const ShopScreen(),
         ServiceBookingScreen.routeName: (ctx) => const ServiceBookingScreen(),
         ProfileScreen.routeName: (ctx) => ProfileScreen(),
@@ -85,6 +85,7 @@ class _MyAppState extends State<MyApp> {
         BookingsScreen.routeName: (ctx) => BookingsScreen(),
         GetLocationScreen.routeName: (ctx) => GetLocationScreen(),
         BookingDetailsScreen.routeName: (ctx) => BookingDetailsScreen(),
+        // ChatScreen.routeName: (ctx) => const ChatScreen(),
       },
     );
   }

@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 import '../../custom_utils/connectivity_helper.dart';
 import '../../custom_utils/custom_alerts.dart';
@@ -7,9 +11,12 @@ import '../../custom_utils/function_response.dart';
 import '../../custom_utils/general_helper.dart';
 import '../../custom_widgets/custom_wrappers.dart';
 import '../../models/service_request.dart';
+import '../../models/service_shop.dart';
 import '../../models/vehicle_service.dart';
+import '../../repo/shop_repo.dart';
 import '../../service_locator.dart';
 import '../../stores/book_service_store.dart';
+import '../chatbox/chat_screen.dart';
 import '../home/home_screen.dart';
 
 class ServiceDetails extends StatelessWidget {
@@ -94,6 +101,54 @@ class ServiceDetails extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //         child: ElevatedButton(
+            //             style: ButtonStyle(
+            //               foregroundColor:
+            //                   MaterialStateProperty.all(Colors.white),
+            //               backgroundColor:
+            //                   MaterialStateProperty.all(Colors.blue.shade900),
+            //             ),
+            //             onPressed: () async {
+            //               // Navigator.of(context).pushNamed(ChatScreen.routeName);
+            //               final CustomAlerts customAlerts =
+            //                   getIt<CustomAlerts>();
+
+            //               customAlerts.showLoaderDialog(context);
+
+            //               final ServiceShop shop = await ShopRepo.instance
+            //                   .getShopById(vehicleService.shopId);
+            //               log('shop : ${shop.id}');
+            //               final types.User shopAsUser = types.User(
+            //                 id: shop.id,
+            //                 firstName: 'Saad',
+            //                 lastName: 'Khan',
+            //                 createdAt: DateTime.now().microsecondsSinceEpoch,
+            //               );
+
+            //               try {
+            //                 final room = await FirebaseChatCore.instance
+            //                     .createRoom(shopAsUser);
+
+            //                 log('room : ${room.id}');
+            //                 push(
+            //                     context,
+            //                     ChatScreen(
+            //                       room: room,
+            //                     ));
+            //               } catch (e) {
+            //                 // TODO
+            //                 log(e.toString());
+            //               }
+            //               customAlerts.popLoader(context);
+            //             },
+            //             child: const Text('Chat Seller'))),
+            //   ],
+            // ),
+
+            const SizedBox(height: 20),
             Row(
               children: [
                 Expanded(
@@ -163,7 +218,7 @@ Widget _customListItem(ThemeData theme, String key, String value) {
                     overflow: TextOverflow.visible,
                   ),
                 ),
-                Expanded(
+                const Expanded(
                   child: SizedBox(),
                 ),
                 Expanded(
